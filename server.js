@@ -2,7 +2,7 @@ var http = require('http');
 var path = require('path');
 var url = require('url');
 var fs = require('fs');
-var port = 4020;
+var port = 1337;
 
 var extensions = {
   ".html": "text/html",
