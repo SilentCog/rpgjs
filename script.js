@@ -93,4 +93,4 @@ function Game () {
 
 var game = new Game();
 var player = game.player;
-game.init();
+(window.console) ? game.init() : 'Gotta use a different browser.';
