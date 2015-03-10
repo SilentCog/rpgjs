@@ -6,15 +6,6 @@ function Game(name, options) {
   var correctAnswer;
   var causeOfDeath;
 
-  var play = function () {
-    var step = steps[count];
-    correctAnswer = actions[step.prompt].options[step.answer];
-    causeOfDeath = step.die;
-    console.log(step.message);
-    utils.showPrompt(actions[step.prompt]);
-    count++;
-  };
-
   var utils = {
     outputChoices: function (arr) {
       var output = '';
@@ -34,7 +25,33 @@ function Game(name, options) {
     },
     showPrompt: function (option) {
       console.log(option.prompt + '(' + utils.outputChoices(option.options) + ')');
+    },
+    setCorrectAnswer: function (step) {
+      if (step.answer !== undefined) {
+        var answer = actions[step.prompt].options[step.answer];
+        correctAnswer = answer;
+      }
+    },
+    setCauseOfDeath: function (step) {
+      if (step.die) {
+        var die = step.die;
+        causeOfDeath = die;
+      }
+    },
+    outputMessage: function (step) {
+      console.log(step.message);
+      if (step.prompt) {
+        utils.showPrompt(actions[step.prompt]);
+      }
     }
+  };
+
+  var play = function () {
+    var step = steps[count];
+    utils.setCorrectAnswer(step);
+    utils.setCauseOfDeath(step);
+    utils.outputMessage(step);
+    count++;
   };
 
   var directions = function () {
@@ -106,12 +123,12 @@ var game = new Game('Westward Bound', {
     }, {
       message: 'You awake. Well rested but hungry. ',
       prompt: 'restaurants',
-      answer: 1,
+      answer: 2,
       die: 'You lose a day to indigestion.'
     }, {
       message: 'The mountains are now behind you and the Great Plains stretch toward the horizon.\n ',
       prompt: 'cardinalDirections',
-      answer: 1,
+      answer: 3,
       die: 'You are going the wrong way. Refer to a map.'
     }, {
       message: 'Welcome to your new life in the Rockies. \nMake wise decisions. \n"Live long and prosper"'
