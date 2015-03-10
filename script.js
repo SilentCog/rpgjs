@@ -1,17 +1,25 @@
-function Game (name, options) {
+function Game(name, options) {
 
-  var actions = options.actions,
-      steps = options.steps,
-      count = 0,
-      correctAnswer,
-      next,
-      causeOfDeath;
+  var actions = options.actions;
+  var steps = options.steps;
+  var count = 0;
+  var correctAnswer;
+  var causeOfDeath;
+
+  var play = function () {
+    var step = steps[count];
+    correctAnswer = actions[step.prompt].options[step.answer];
+    causeOfDeath = step.die;
+    console.log(step.message);
+    utils.showPrompt(actions[step.prompt]);
+    count++;
+  };
 
   var utils = {
     outputChoices: function (arr) {
-      var output = '',
-          length = arr.length - 1;
-      arr.forEach(function (e, i, a) {
+      var output = '';
+      var length = arr.length - 1;
+      arr.forEach(function (e, i) {
         output += (i !== length) ? e + ', ' : e;
       });
       return output;
@@ -27,15 +35,6 @@ function Game (name, options) {
     showPrompt: function (option) {
       console.log(option.prompt + '(' + utils.outputChoices(option.options) + ')');
     }
-  };
-
-  var play = function (move) {
-    var step = steps[count];
-    correctAnswer = actions[step.prompt].options[step.answer];
-    causeOfDeath = step.die;
-    console.log(step.message);
-    if (prompt) utils.showPrompt(actions[step.prompt]);
-    count++;
   };
 
   var directions = function () {
@@ -55,13 +54,12 @@ function Game (name, options) {
 
   this.init = function () {
     directions();
-    play(count);
+    play();
   };
-
-};
+}
 
 var game = new Game('Westward Bound', {
-  actions:{
+  actions: {
     cardinalDirections: {
       prompt: 'What direction should do go? ',
       options: [
@@ -77,7 +75,8 @@ var game = new Game('Westward Bound', {
         'Sleep',
         'Coffee',
         'Drive'
-    ]},
+      ]
+    },
     restaurants: {
       prompt: 'Where shall you eat? ',
       options: [
@@ -88,36 +87,42 @@ var game = new Game('Westward Bound', {
       ]
     }
   },
-  steps: [{
-    message: 'You have to drive a truck with a trailer across the country from New York to Colorado in the winter.\nThere is a blizzard to the West.',
-    prompt: 'cardinalDirections',
-    answer: 1,
-    die: 'White out conditions. Snow piles up beyond the tail pipe. You die sleepily in your vehicle awaiting rescue.'
-  }, {
-    message: 'You get to Washington DC and the roads are fairly dry.',
-    prompt: 'cardinalDirections',
-    answer: 3,
-    die: 'You die in a horrific accident. Too bad about your life.'
-  }, {
-    message: 'You get to the foothills of the Appalachians after a long day. ',
-    prompt: 'driverStatus',
-    answer: 0,
-    die: 'You tumble off the highway and are never seen again.'
-  }, {
-    message: 'You awake. Well rested but hungry. ',
-    prompt: 'restaurants',
-    answer: 1,
-    die: 'You lose a day to indigestion.'
-  }, {
-    message: 'The mountains are now behind you and the Great Plains stretch toward the horizon.\n ',
-    prompt: 'cardinalDirections',
-    answer: 1,
-    die: 'You are going the wrong way. Refer to a map.'
-  }, {
-    message: 'Welcome to your new life in the Rockies. \nMake wise decisions. \n"Live long and prosper"'
-  }]
+  steps: [
+    {
+      message: 'You have to drive a truck with a trailer across the country from New York to Colorado in the winter.\nThere is a blizzard to the West.',
+      prompt: 'cardinalDirections',
+      answer: 1,
+      die: 'White out conditions. Snow piles up beyond the tail pipe. You die sleepily in your vehicle awaiting rescue.'
+    }, {
+      message: 'You get to Washington DC and the roads are fairly dry.',
+      prompt: 'cardinalDirections',
+      answer: 3,
+      die: 'You die in a horrific accident. Too bad about your life.'
+    }, {
+      message: 'You get to the foothills of the Appalachians after a long day. ',
+      prompt: 'driverStatus',
+      answer: 0,
+      die: 'You tumble off the highway and are never seen again.'
+    }, {
+      message: 'You awake. Well rested but hungry. ',
+      prompt: 'restaurants',
+      answer: 1,
+      die: 'You lose a day to indigestion.'
+    }, {
+      message: 'The mountains are now behind you and the Great Plains stretch toward the horizon.\n ',
+      prompt: 'cardinalDirections',
+      answer: 1,
+      die: 'You are going the wrong way. Refer to a map.'
+    }, {
+      message: 'Welcome to your new life in the Rockies. \nMake wise decisions. \n"Live long and prosper"'
+    }
+  ]
 });
 
 var player = game.player;
 
-(window.console) ? game.init() : document.getElementsByTagName('h1')[0].innerHTML = 'Gotta use a different browser.';
+if (window.console) {
+  game.init();
+} else {
+  document.getElementsByTagName('h1')[0].innerHTML = 'Gotta use a different browser.';
+}
