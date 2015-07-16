@@ -9,7 +9,7 @@ Install node.js and run
 node server
 ```
 
-Open your browser to `http://localhost:l337/index.html'
+Open your browser to `http://localhost:1337/index.html'
 
 ## License
 
