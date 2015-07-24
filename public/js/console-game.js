@@ -2,22 +2,17 @@ function NewGame(name, options)
 {
 	var game = new Game(name, options);
 	
-	game.init();
-	
-	return function(input)
-	{
-		game.play(input);
-	}
+	return game.play;
 }
 
 function Game(name, options)
 {
-	var actions = options.actions;
-	var steps = options.steps;
-	var count = 0;
-	var correctAnswer;
-	var causeOfDeath;
-
+	var actions       = options.actions ;
+	var steps         = options.steps   ;
+	var count         = 0               ;
+	var correctAnswer                   ;
+	var causeOfDeath                    ;
+	
 	var utils = {
 		outputChoices: function (arr)
 		{
@@ -30,9 +25,9 @@ function Game(name, options)
 		},
 		readInput: function (input)
 		{
-			console.log(input + " - " + correctAnswer);
+			console.log(input);
 			
-			if (input !== correctAnswer)
+			if (input.toLowerCase() !== correctAnswer.toLowerCase())
 			{
 				console.log(causeOfDeath);
 			}
@@ -101,16 +96,16 @@ function Game(name, options)
 			basicActions[com](arg);
 		else
 			console.warn("I don't understand \"" + com + "\"");
+		
+		return "---------------------------------------------------------" // suppresses "undefined" text, replaces it with line highlighting boundary between commands
 	}
 	
-	this.player = {
-		move : function(input)
-		{
+	// TODO: move all functions directly into this object
+	var basicActions = {
+		move   : function(input) {
 			utils.readInput(input);
 		},
-		
-		addToInventory : function(item)
-		{
+		pickup : function(item)  {
 			if(invetory[item.name])
 				return false; // I already have that item
 			
@@ -118,23 +113,12 @@ function Game(name, options)
 			
 			return true;
 		},
-		
-		end : function()
-		{
+		end    : function()      {
 			console.log('quitter');
 		}
-	};
-	
-	// TODO: move all functions directly into this object
-	var basicActions = {
-		move   : this.player.move           ,
-		pickup : this.player.addToInventory ,
-		end    : this.player.end
 	}
-
-	this.init = function()
-	{
-		directions();
-		play();
-	};
+	
+	// initialization stuff
+	directions();
+	play();
 }
