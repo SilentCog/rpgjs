@@ -1,3 +1,15 @@
+function NewGame(name, options)
+{
+	var game = new Game(name, options);
+	
+	game.init();
+	
+	return function(input)
+	{
+		game.play(input);
+	}
+}
+
 function Game(name, options)
 {
 	var actions = options.actions;
@@ -18,7 +30,7 @@ function Game(name, options)
 		},
 		readInput: function (input)
 		{
-			console.log(input);
+			console.log(input + " - " + correctAnswer);
 			
 			if (input !== correctAnswer)
 			{
@@ -37,7 +49,8 @@ function Game(name, options)
 		{
 			if (step.answer !== undefined)
 			{
-				var answer = actions[step.prompt].options[step.answer];
+				var
+				answer = actions[step.prompt].options[step.answer];
 				correctAnswer = answer;
 			}
 		},
@@ -81,11 +94,11 @@ function Game(name, options)
 	this.play = function(input)
 	{
 		var splitIndex = input.indexOf(" ");
-		var com = input.slice(0, splitIndex);
-		var arg = input.slice(splitIndex, -1);
+		var com = input.slice(0, splitIndex).toLowerCase();
+		var arg = input.substring(splitIndex + 1);
 		
-		if(actions[com])
-			actions[com](arg);
+		if(basicActions[com])
+			basicActions[com](arg);
 		else
 			console.warn("I don't understand \"" + com + "\"");
 	}
@@ -113,7 +126,7 @@ function Game(name, options)
 	};
 	
 	// TODO: move all functions directly into this object
-	var actions = {
+	var basicActions = {
 		move   : this.player.move           ,
 		pickup : this.player.addToInventory ,
 		end    : this.player.end
