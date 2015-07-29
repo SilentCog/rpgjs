@@ -5,120 +5,112 @@ function NewGame(name, options)
 	return game.play;
 }
 
-function Game(name, options)
+var Game;
+
+(function()
 {
-	var actions       = options.actions ;
-	var steps         = options.steps   ;
-	var count         = 0               ;
-	var correctAnswer                   ;
-	var causeOfDeath                    ;
+	var div = "--------------------------------------------";
 	
-	var utils = {
-		outputChoices: function (arr)
+	Game = function(name, options)
+	{
+		var g = this;
+		
+		if(!options.frames.entry)
+			throw "Game requires that exactly one frame be named \"entry\"";
+		
+		console.log(name + " v" + options.version + "\r\n\r\n" + div + "\r\n\r\n" + options.intro);
+		
+		var inventory = {};
+		var gameVars  = {};
+		
+		
+		this.initGameVar = function(key, value)
 		{
-			var output = '';
-			var length = arr.length - 1;
-			arr.forEach(function (e, i) {
-				output += (i !== length) ? e + ', ' : e;
-			});
-			return output;
-		},
-		readInput: function (input)
+			if(typeof g.gameVars(key) == "undefined")
+				g.gameVars(key, value);
+		}
+		
+		this.gameVariable = function(key, value)
 		{
-			console.log(input);
+			if(typeof value !== "undefined")
+				gameVars[key] = value;
 			
-			if (input.toLowerCase() !== correctAnswer.toLowerCase())
-			{
-				console.log(causeOfDeath);
-			}
+			return gameVars[key];
+		}
+		
+		this.initFrameVar = function(key, value)
+		{
+			if(typeof g.frameVars(key) == "undefined")
+				g.frameVars(key, value);
+		}
+		
+		this.frameVars = function(key, value)
+		{
+			if(!currentFrame.frameVars)
+				currentFrame.frameVars = {};
+			
+			if(typeof value !== "undefined")
+				currentFrame.frameVars[key] = value;
+			
+			return currentFrame.frameVars[key];
+		}
+		
+		this.play = function(input)
+		{
+			var splitIndex = input.indexOf(" ");
+			var com = input.slice(0, splitIndex).toLowerCase();
+			var arg = input.substring(splitIndex + 1);
+			
+			var result;
+			
+			if(currentFrame.frameActions && currentFrame.frameActions[com])
+				result = currentFrame.frameActions[com].apply(g, [arg]);
+			else if(basicActions[com])
+				result = basicActions[com](arg);
 			else
-			{
-				play(count);
-			}
-		},
-		showPrompt: function (option)
-		{
-			console.log(option.prompt + '(' + utils.outputChoices(option.options) + ')');
-		},
-		setCorrectAnswer: function (step)
-		{
-			if (step.answer !== undefined)
-			{
-				var
-				answer = actions[step.prompt].options[step.answer];
-				correctAnswer = answer;
-			}
-		},
-		setCauseOfDeath: function (step)
-		{
-			if (step.die)
-			{
-				var die = step.die;
-				causeOfDeath = die;
-			}
-		},
-		outputMessage: function (step)
-		{
-			console.log(step.message);
-			if (step.prompt)
-			{
-				utils.showPrompt(actions[step.prompt]);
-			}
-		}
-	};
-
-	var play = function ()
-	{
-		var step = steps[count];
-		utils.setCorrectAnswer(step);
-		utils.setCauseOfDeath(step);
-		utils.outputMessage(step);
-		count++;
-	};
-
-	var directions = function ()
-	{
-		console.log(name + '\n' + 'To make a move use player.move(). Refresh to start again.\n---------------------------------------------------------\n');
-	};
-
-	// public methods
-	
-	var inventory = {};
-	
-	
-	this.play = function(input)
-	{
-		var splitIndex = input.indexOf(" ");
-		var com = input.slice(0, splitIndex).toLowerCase();
-		var arg = input.substring(splitIndex + 1);
-		
-		if(basicActions[com])
-			basicActions[com](arg);
-		else
-			console.warn("I don't understand \"" + com + "\"");
-		
-		return "---------------------------------------------------------" // suppresses "undefined" text, replaces it with line highlighting boundary between commands
-	}
-	
-	// TODO: move all functions directly into this object
-	var basicActions = {
-		move   : function(input) {
-			utils.readInput(input);
-		},
-		pickup : function(item)  {
-			if(invetory[item.name])
-				return false; // I already have that item
+				result = "I don't understand \"" + com + "\"";
 			
-			inventory[item.name] = item.use;
+			if(result)
+				console.log(result);
 			
-			return true;
-		},
-		end    : function()      {
-			console.log('quitter');
+			return div; // suppresses "undefined" text, replaces it with line highlighting boundary between commands
 		}
+		
+		this.moveTo = function(frameName)
+		{
+			if(!options.frames[frameName])
+				throw "Could not find frame \"" + frameName + "\"";
+			
+			currentFrame = options.frames[frameName];
+			
+			var intro = (typeof currentFrame.intro == "string" ? currentFrame.intro : currentFrame.intro());
+			console.log(intro);
+			
+			if(currentFrame.onEnter)
+				currentFrame.onEnter.apply(g);
+		}
+		
+		var basicActions = {
+			move   : function(input)
+			{
+				var func = currentFrame.movement[input];
+				
+				if(func)
+					return func.apply(g);
+				else
+					return "I can't move " + input;
+			}/*,
+			pickup : function(item)
+			{
+				if(invetory[item.name])
+					return false; // I already have that item
+				
+				inventory[item.name] = item.use;
+				
+				return true;
+			}*/
+		}
+		
+		this.moveTo("entry");
 	}
-	
-	// initialization stuff
-	directions();
-	play();
-}
+})();
