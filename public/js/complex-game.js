@@ -4,15 +4,42 @@ var g = NewGame("Complex Game", {
 	frames         : {
 		"entry" : {
 			intro        : "You're in the entry way to the building.  To the north is a hallway.",
+			inspect      : function()
+			{
+				return "There's a drawer against the wall" + (this.itemAvailable("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it"
+			},
 			onEnter      : function()
 			{
-				this.initFrameVar("doorOpen", true);
+				this.initFrameVar("doorOpen",   true  );
+				this.initFrameVar("drawerOpen", false );
 			},
-			items        : [
-				"shovel" ,
-				"fan"    ,
-				"key"
-			],
+			items        : {
+				"shovel" : { pronounString : "a shovel" },
+				"key"    : {
+					pronounString : "a key",
+					availability  : function()
+					{
+						return this.frameVars("drawerOpen");
+					},
+					use           : function(obj) // TODO: I don't like the way "use" works right now.  It should have to get a string to figure out which room it's in
+					{
+						if(this.getCurrentFrameName() == "doorRoom")
+						{
+							if(!this.frameVars("doorLocked"))
+								return "The door is already unlocked";
+							
+							this.frameVars("doorLocked", false);
+							
+							if(obj == "door")
+								return "The door is unlocked";
+							else
+								return "I can't use the key on that";
+						}
+						
+						return "I can't use the key on that";
+					}
+				}
+			},
 			movement     : {
 				"north" : function()
 				{
@@ -31,7 +58,6 @@ var g = NewGame("Complex Game", {
 				{
 					switch(val)
 					{
-						default:
 						case "door":
 							if(this.frameVars("doorOpen"))
 							{
@@ -41,14 +67,26 @@ var g = NewGame("Complex Game", {
 							else
 								return "The door is already shut";
 							
-							break;
+						case "door":
+							if(this.frameVars("doorOpen"))
+							{
+								this.frameVars("doorOpen", false);
+								return "I've shut the door";
+							}
+							else
+								return "The door is already shut";
+							
+						case "":
+							return "What did you want me to shut?";
+							
+						default:
+							return "I can't shut that.";
 					}
 				},
 				"open" : function(val)
 				{
 					switch(val)
 					{
-						default:
 						case "door":
 							if(!this.frameVars("doorOpen"))
 							{
@@ -58,17 +96,110 @@ var g = NewGame("Complex Game", {
 							else
 								return "The door is already open";
 							
-							break;
+						case "drawer":
+							if(!this.frameVars("drawerOpen"))
+							{
+								this.frameVars("drawerOpen", true);
+								return "I've opened the door" + (this.frameHasItem("key") ? ", there is a key inside." : ".");
+							}
+							else
+								return "The drawer is already open";
+							
+						case "":
+							return "What did you want me to open?";
+							
+						default:
+							return "I can't open that.";
 					}
 				}
 			}
 		},
 		"hallway" : {
-			intro        : "You're in a long hallway, looks like a dead end.  To the south is the entrance to the mansion.",
-			movement     : {
+			intro    : "You're in a long hallway.  It splits off to the east and west.  To the south is the entrance to the mansion.",
+			inspect  : "Something tells you this place isn't as big as it looked from the outside",
+			movement : {
 				"south" : function()
 				{
 					this.moveTo("entry");
+				},
+				"east"  : function()
+				{
+					this.moveTo("deadEnd");
+				},
+				"west"  : function()
+				{
+					this.moveTo("doorRoom");
+				}
+			}
+		},
+		"deadEnd" : {
+			intro    : "You've arrived in a short hallway.  Looks like a dead end.  To the west is a hallway.",
+			inspect  : "No, seriously, this is just a dead end.",
+			movement : {
+				"west" : function()
+				{
+					this.moveTo("hallway");
+				}
+			}
+		},
+		"doorRoom" : {
+			intro    : "In the west of a small alcove is a shut door.  To the east is a hallway.",
+			onEnter      : function()
+			{
+				this.initFrameVar( "doorOpen",   false );
+				this.initFrameVar( "doorLocked", true  );
+			},
+			frameActions : {
+				"shut" : function(val)
+				{
+					switch(val)
+					{
+						case "door":
+							if(this.frameVars("doorOpen"))
+							{
+								this.frameVars("doorOpen", false);
+								return "I've shut the door";
+							}
+							else
+								return "The door is already shut";
+							
+						case "":
+							return "What did you want me to shut?";
+							
+						default:
+							return "I can't shut that.";
+					}
+				},
+				"open" : function(val)
+				{
+					switch(val)
+					{
+						case "door":
+							if(!this.frameVars("doorOpen"))
+							{
+								if(!this.frameVars("doorLocked"))
+								{
+									this.frameVars("doorOpen", true);
+									return "I've opened the door";
+								}
+								else
+									return "It's locked.";
+							}
+							else
+								return "The door is already open";
+							
+						case "":
+							return "What did you want me to open?";
+							
+						default:
+							return "I can't open that.";
+					}
+				}
+			},
+			movement : {
+				"east" : function()
+				{
+					this.moveTo("hallway");
 				}
 			}
 		}
