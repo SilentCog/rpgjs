@@ -6,7 +6,7 @@ var g = NewGame("Complex Game", {
 			intro        : "You're in the entry way to the building.  To the north is a hallway.",
 			inspect      : function()
 			{
-				return "There's a drawer against the wall" + (this.itemAvailable("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it"
+				return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it"
 			},
 			onEnter      : function()
 			{
@@ -14,7 +14,6 @@ var g = NewGame("Complex Game", {
 				this.initFrameVar("drawerOpen", false );
 			},
 			items        : {
-				"shovel" : { pronounString : "a shovel" },
 				"key"    : {
 					pronounString : "a key",
 					availability  : function()
@@ -133,8 +132,36 @@ var g = NewGame("Complex Game", {
 			}
 		},
 		"deadEnd" : {
-			intro    : "You've arrived in a short hallway.  Looks like a dead end.  To the west is a hallway.",
-			inspect  : "No, seriously, this is just a dead end.",
+			intro    : "You've arrived in a short hallway.  Looks like a dead end.  On the floor is a pile of junk.  To the west is a hallway.",
+			inspect  : function()
+			{
+				if(this.frameHasItem("shovel"))
+					return "Upon further inspection, you find a shovel in the pile.";
+				else
+					return "Just a dirty dead end.";
+			},
+			items    : {
+				"shovel" : {
+					pronounString : "a shovel",
+					use           : function(obj)
+					{
+						if(this.getCurrentFrameName() == "garden")
+						{
+							if(this.frameVars("holeDug"))
+								return "You already dug a hole";
+							
+							this.frameVars("holeDug", true);
+							
+							if(obj == "ground")
+								return "You dug a hole.  There's a large chest inside!";
+							else
+								return "I can't use the shovel with that.";
+						}
+						
+						return "I can't use the key on that";
+					}
+				}
+			},
 			movement : {
 				"west" : function()
 				{
@@ -143,7 +170,7 @@ var g = NewGame("Complex Game", {
 			}
 		},
 		"doorRoom" : {
-			intro    : "In the west of a small alcove is a shut door.  To the east is a hallway.",
+			intro        : "In the west of a small alcove is a shut door.  To the east is a hallway.",
 			onEnter      : function()
 			{
 				this.initFrameVar( "doorOpen",   false );
@@ -200,6 +227,45 @@ var g = NewGame("Complex Game", {
 				"east" : function()
 				{
 					this.moveTo("hallway");
+				},
+				"west" : function()
+				{
+					if(this.frameVars("doorOpen"))
+						this.moveTo("garden");
+					else
+						return "The door is shut.";
+				}
+			}
+		},
+		"garden" : {
+			intro        : "You're in a small garden.  To the east is a doorway leading back into the house.",
+			onEnter      : function()
+			{
+				this.initFrameVar("holeDug", false);
+			},
+			inspect      : function()
+			{
+				if(this.FrameVars("holeDug"))
+					return "The hole you dug is still there.  There's a large chest sitting in it.";
+				else
+					return "The ground here is really soft."
+			},
+			movement     : {
+				"east" : function()
+				{
+					this.moveTo("doorRoom");
+				}
+			},
+			frameActions : {
+				"dig"  : function()
+				{
+					if(this.inventoryHasItem("shovel"))
+						this.play("use shovel on ground");
+				},
+				"open" : function(input)
+				{
+					if(this.frameVars("holeDug") && input == "chest")
+						this.win("You found the treasure!  Congratulations!")
 				}
 			}
 		}

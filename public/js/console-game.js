@@ -15,6 +15,8 @@ var Game;
 	{
 		var g = this;
 		
+		var gameActive = true;
+		
 		var currentFrame = null ;
 		var cFrameName   = ""   ;
 		
@@ -60,6 +62,9 @@ var Game;
 		
 		this.play = function(input)
 		{
+			if(!gameActive)
+				return "...";
+			
 			var splitIndex = input.indexOf(" ");
 			var com, arg;
 			
@@ -141,17 +146,67 @@ var Game;
 			return typeof g.getItemFromFrame(itemName) != "undefined";
 		}
 		
-		this.itemAvailable = function(itemName)
+		this.itemAvailableInFrame = function(itemName)
 		{
 			var item = g.getItemFromFrame(itemName);
 			
 			return item && (!item.availability || item.availability.apply(g));
 		}
 		
+		this.addItemToInventory = function(itemName, item)
+		{
+			if(inventory[itemName])
+				return false; // I already have that item
+			
+			inventory[itemName] = currentFrame.items[itemName];
+			g.removeItemFromFrame(itemName);
+			
+			return true;
+		}
+		
+		this.removeItemFromInventory = function(itemName)
+		{
+			if(!inventory[itemName])
+				return false;
+			
+			delete inventory[itemName];
+			return true;
+		}
+		
+		this.getitemFromInventory = function(itemName)
+		{
+			return inventory[itemName];
+		}
+		
+		this.inventoryHasItem = function(itemName)
+		{
+			return typeof g.getitemFromInventory(itemName) != "undefined";
+		}
+		
 		// TODO: return a copy of inventory so it can't be modified directly
 		this.getInventory = function()
 		{
 			return inventory;
+		}
+		
+		this.win = function(message)
+		{
+			gameActive = false;
+			
+			if(message)
+				console.log(message);
+			else
+				console.log("You Win!");
+		}
+		
+		this.lose = function(message)
+		{
+			gameActive = false;
+			
+			if(message)
+				console.log(message);
+			else
+				console.log("Game Over!");
 		}
 		
 		var basicActions = {
@@ -184,18 +239,15 @@ var Game;
 			{
 				var item = currentFrame.items[itemName];
 				
-				if(!item || !g.itemAvailable(itemName))
+				if(!item || !g.itemAvailableInFrame(itemName))
 					return "I can't pick that up.";
 				
 				var ps = (item.pronounString ? item.pronounString : " a " + itemName);
 				
-				if(inventory[itemName])
+				if(g.addItemToInventory(itemName, item))
+					return "Picked up " + ps;
+				else
 					return "I already have " + ps; // I already have that item
-				
-				inventory[itemName] = currentFrame.items[itemName];
-				g.removeItemFromFrame(itemName);
-				
-				return "Picked up " + ps;
 			},
 			use : function(useStr)
 			{
