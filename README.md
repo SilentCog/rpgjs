@@ -7,6 +7,7 @@ To make a game call the NewGame function, passing it a game name (string) and op
 
 Structure of the options object:
 
+```
 {
 	actions : { // Actions available at various places in the game
 		cardinalDirections : {
@@ -46,6 +47,7 @@ Structure of the options object:
 		}
 	]
 };
+```
 
 ## License
 
