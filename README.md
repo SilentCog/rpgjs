@@ -1,4 +1,5 @@
 # console-game
+
 API for creating easter-egg text-adventure game in your site's console.
 
 
@@ -98,26 +99,6 @@ frameActions : {
 				
 			default:
 				return "I can't shut that.";
-		}
-	},
-	"open" : function(val)
-	{
-		switch(val)
-		{
-			case "door":
-				if(!this.frameVars("doorOpen"))
-				{
-					this.frameVars("doorOpen", true);
-					return "I've opened the door";
-				}
-				else
-					return "The door is already open";
-				
-			case "":
-				return "What did you want me to open?";
-				
-			default:
-				return "I can't open that.";
 		}
 	}
 }
