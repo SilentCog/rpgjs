@@ -27,7 +27,7 @@ The second parameter passed to the `NewGame` function is a series of options and
  - intro
  - frames
  
-`version` specifies the version of the game, intro is the text displayed on start up (in addition to the intro text from the first room).  Frames is an object literal which defines the bulk of your game.
+`version` specifies the version of the game, `intro` is the text displayed on start up (in addition to the intro text from the first room).  Frames is an object which defines the bulk of your game.
 
 ### Frames
 
@@ -36,9 +36,9 @@ Frames are the backbone of your game.  Each one represents a room, or position. 
  - **intro** (*required - function, string*): A string, or function which returns a string, of introductory text displayed every time the player enters this frame.
  - **inspect** (*optional - function, string*): A string, or function which returns a string, of text to display when the player "inspects" this frame.
  - **onEnter** (*optional - function*): A function which is called every time the player enters this frame.
- - **items** (*optional - object literal*): An object containing the items available when using the "pickup" action in this frame.  See "Items", "Basic Actions".
- - **movement** (*optional - object literal*): An object containing possible directions to listen for when using the "move" action.  See "Basic Actions".
- - **frameActions** (*optional - object literal*): An object literal containing additional actions to listen to on this frame.  See "Frame Actions".
+ - **items** (*optional - object*): An object containing the items available when using the "pickup" action in this frame.  See "Items", "Basic Actions".
+ - **movement** (*optional - object*): An object containing possible directions to listen for when using the "move" action.  See "Basic Actions".
+ - **frameActions** (*optional - object*): An object containing additional actions to listen to on this frame.  See "Frame Actions".
 
 ### Functions
 
