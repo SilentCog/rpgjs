@@ -81,6 +81,26 @@ In addition to basic actions, every frame has the ability to add actions that ap
 
 ```javascript
 frameActions : {
+	"open" : function(val)
+	{
+		switch(val)
+		{
+			case "door":
+				if(!this.frameVars("doorOpen"))
+				{
+					this.frameVars("doorOpen", true);
+					return "I've opened the door";
+				}
+				else
+					return "The door is already open";
+				
+			case "":
+				return "What did you want me to open?";
+				
+			default:
+				return "I can't open that.";
+		}
+	},
 	"close" : function(val)
 	{
 		switch(val)
