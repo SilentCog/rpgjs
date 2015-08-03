@@ -29,24 +29,28 @@ var Game;
 		var gameVars  = {};
 		
 		
-		this.initGameVar = function(key, value)
+		this.addItemToFrame = function(itemName, item)
 		{
-			if(typeof g.gameVars(key) == "undefined")
-				g.gameVars(key, value);
-		}
-		
-		this.gameVariable = function(key, value)
-		{
-			if(typeof value !== "undefined")
-				gameVars[key] = value;
+			if(currentFrame.items[itemName])
+				return false;
 			
-			return gameVars[key];
+			currentFrame.items[itemName] = item;
+			return true;
 		}
 		
-		this.initFrameVar = function(key, value)
+		this.addItemToInventory = function(itemName, item)
 		{
-			if(typeof g.frameVars(key) == "undefined")
-				g.frameVars(key, value);
+			if(inventory[itemName])
+				return false; // I already have that item
+			
+			inventory[itemName] = item;
+			
+			return true;
+		}
+		
+		this.frameHasItem = function(itemName)
+		{
+			return typeof g.getItemFromFrame(itemName) != "undefined";
 		}
 		
 		this.frameVars = function(key, value)
@@ -58,6 +62,89 @@ var Game;
 				currentFrame.frameVars[key] = value;
 			
 			return currentFrame.frameVars[key];
+		}
+		
+		this.gameVars = function(key, value)
+		{
+			if(typeof value !== "undefined")
+				gameVars[key] = value;
+			
+			return gameVars[key];
+		}
+		
+		this.getCurrentFrame = function()
+		{
+			return currentFrame;
+		}
+		
+		this.getCurrentFrameName = function()
+		{
+			return cFrameName;
+		}
+		
+		this.getItemFromFrame = function(itemName)
+		{
+			return currentFrame.items[itemName];
+		}
+		
+		this.getItemFromInventory = function(itemName)
+		{
+			return inventory[itemName];
+		}
+		
+		// TODO: return a copy of inventory so it can't be modified directly
+		this.getInventory = function()
+		{
+			return inventory;
+		}
+		
+		this.initFrameVar = function(key, value)
+		{
+			if(typeof g.frameVars(key) == "undefined")
+				g.frameVars(key, value);
+		}
+		
+		this.initGameVar = function(key, value)
+		{
+			if(typeof g.gameVars(key) == "undefined")
+				g.gameVars(key, value);
+		}
+		
+		this.inventoryHasItem = function(itemName)
+		{
+			return typeof g.getItemFromInventory(itemName) != "undefined";
+		}
+		
+		this.itemAvailableInFrame = function(itemName)
+		{
+			var item = g.getItemFromFrame(itemName);
+			
+			return item && (!item.availability || item.availability.apply(g));
+		}
+		
+		this.lose = function(message)
+		{
+			gameActive = false;
+			
+			if(message)
+				console.log(message);
+			else
+				console.log("Game Over!");
+		}
+		
+		this.moveTo = function(frameName)
+		{
+			if(!options.frames[frameName])
+				throw "Could not find frame \"" + frameName + "\"";
+			
+			currentFrame = options.frames[frameName] ;
+			cFrameName   = frameName                 ;
+			
+			var intro = (typeof currentFrame.intro == "string" ? currentFrame.intro : currentFrame.intro());
+			console.log(intro);
+			
+			if(currentFrame.onEnter)
+				currentFrame.onEnter.apply(g);
 		}
 		
 		this.play = function(input)
@@ -94,73 +181,12 @@ var Game;
 			return div; // suppresses "undefined" text, replaces it with line highlighting boundary between commands
 		}
 		
-		this.getCurrentFrame = function()
-		{
-			return currentFrame;
-		}
-		
-		this.getCurrentFrameName = function()
-		{
-			return cFrameName;
-		}
-		
-		this.moveTo = function(frameName)
-		{
-			if(!options.frames[frameName])
-				throw "Could not find frame \"" + frameName + "\"";
-			
-			currentFrame = options.frames[frameName] ;
-			cFrameName   = frameName                 ;
-			
-			var intro = (typeof currentFrame.intro == "string" ? currentFrame.intro : currentFrame.intro());
-			console.log(intro);
-			
-			if(currentFrame.onEnter)
-				currentFrame.onEnter.apply(g);
-		}
-		
-		this.addItemToFrame = function(itemName)
-		{
-			if(currentFrame.items[itemName])
-				return false;
-			
-			currentFrame.items[itemName] = {}; // TODO: figure out how to use items.  Right now they're just a bunch of blank objects
-		}
-		
 		this.removeItemFromFrame = function(itemName)
 		{
 			if(!currentFrame.items[itemName])
 				return false;
 			
 			delete currentFrame.items[itemName];
-			return true;
-		}
-		
-		this.getItemFromFrame = function(itemName)
-		{
-			return currentFrame.items[itemName];
-		}
-		
-		this.frameHasItem = function(itemName)
-		{
-			return typeof g.getItemFromFrame(itemName) != "undefined";
-		}
-		
-		this.itemAvailableInFrame = function(itemName)
-		{
-			var item = g.getItemFromFrame(itemName);
-			
-			return item && (!item.availability || item.availability.apply(g));
-		}
-		
-		this.addItemToInventory = function(itemName, item)
-		{
-			if(inventory[itemName])
-				return false; // I already have that item
-			
-			inventory[itemName] = currentFrame.items[itemName];
-			g.removeItemFromFrame(itemName);
-			
 			return true;
 		}
 		
@@ -173,22 +199,6 @@ var Game;
 			return true;
 		}
 		
-		this.getitemFromInventory = function(itemName)
-		{
-			return inventory[itemName];
-		}
-		
-		this.inventoryHasItem = function(itemName)
-		{
-			return typeof g.getitemFromInventory(itemName) != "undefined";
-		}
-		
-		// TODO: return a copy of inventory so it can't be modified directly
-		this.getInventory = function()
-		{
-			return inventory;
-		}
-		
 		this.win = function(message)
 		{
 			gameActive = false;
@@ -197,16 +207,6 @@ var Game;
 				console.log(message);
 			else
 				console.log("You Win!");
-		}
-		
-		this.lose = function(message)
-		{
-			gameActive = false;
-			
-			if(message)
-				console.log(message);
-			else
-				console.log("Game Over!");
 		}
 		
 		var basicActions = {
@@ -245,7 +245,10 @@ var Game;
 				var ps = (item.pronounString ? item.pronounString : " a " + itemName);
 				
 				if(g.addItemToInventory(itemName, item))
+				{
+					g.removeItemFromFrame(itemName);
 					return "Picked up " + ps;
+				}
 				else
 					return "I already have " + ps; // I already have that item
 			},

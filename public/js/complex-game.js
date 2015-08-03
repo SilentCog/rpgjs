@@ -66,14 +66,14 @@ var g = NewGame("Complex Game", {
 							else
 								return "The door is already shut";
 							
-						case "door":
-							if(this.frameVars("doorOpen"))
+						case "drawer":
+							if(this.frameVars("drawerOpen"))
 							{
-								this.frameVars("doorOpen", false);
-								return "I've shut the door";
+								this.frameVars("drawerOpen", false);
+								return "I've shut the drawer";
 							}
 							else
-								return "The door is already shut";
+								return "The drawer is already shut";
 							
 						case "":
 							return "What did you want me to shut?";
