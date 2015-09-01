@@ -1,11 +1,19 @@
-var g = NewGame("The Mansion", {
+var Game = require('../game/game');
+
+function NewGame(name, options) {
+  var game = new Game(name, options);
+  
+  return game.play;
+}
+
+module.exports = NewGame("The Mansion", {
   version        : "0.2",
   intro          : "Oh look!  A house!  Let's go in it!",
   frames         : {
     "entry" : {
       intro        : "You're in the entry way to the building.  To the north is a hallway.",
       inspect      : function() {
-        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it"
+        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it";
       },
       onEnter      : function() {
         this.initFrameVar("doorOpen",   true  );
@@ -55,6 +63,7 @@ var g = NewGame("The Mansion", {
               }
               else
                 return "The door is already shut";
+              break;
               
             case "drawer":
               if(this.frameVars("drawerOpen")) {
@@ -63,6 +72,7 @@ var g = NewGame("The Mansion", {
               }
               else
                 return "The drawer is already shut";
+              break;
               
             case "":
               return "What did you want me to shut?";
@@ -80,6 +90,7 @@ var g = NewGame("The Mansion", {
               }
               else
                 return "The door is already open";
+              break;
               
             case "drawer":
               if(!this.frameVars("drawerOpen")) {
@@ -88,6 +99,7 @@ var g = NewGame("The Mansion", {
               }
               else
                 return "The drawer is already open";
+              break;
               
             case "":
               return "What did you want me to open?";
@@ -163,6 +175,7 @@ var g = NewGame("The Mansion", {
               }
               else
                 return "The door is already shut";
+              break;
               
             case "":
               return "What did you want me to shut?";
@@ -184,6 +197,7 @@ var g = NewGame("The Mansion", {
               }
               else
                 return "The door is already open";
+              break;
               
             case "":
               return "What did you want me to open?";
@@ -214,7 +228,7 @@ var g = NewGame("The Mansion", {
         if(this.FrameVars("holeDug"))
           return "The hole you dug is still there.  There's a large chest sitting in it.";
         else
-          return "The ground here is really soft."
+          return "The ground here is really soft.";
       },
       movement     : {
         "east" : function() {
@@ -228,9 +242,9 @@ var g = NewGame("The Mansion", {
         },
         "open" : function(input) {
           if(this.frameVars("holeDug") && input === "chest")
-            this.win("You found the treasure!  Congratulations!")
+            this.win("You found the treasure!  Congratulations!");
         }
       }
     }
   }
-})
+});
