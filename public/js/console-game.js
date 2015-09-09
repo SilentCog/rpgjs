@@ -1,7 +1,10 @@
 function NewGame(name, options) {
   var game = new Game(name, options);
   
-  return game.play;
+  return function(command)
+  {
+    console.log(game.play(command));
+  };
 }
 
 var Game;
@@ -16,6 +19,8 @@ var Game;
     
     var currentFrame = null ;
     var cFrameName   = ""   ;
+    
+    var endGameMessage = "..." ;
     
     if(!options.frames.entry)
       throw "Game requires that exactly one frame be named \"entry\"";
@@ -32,7 +37,7 @@ var Game;
       
       currentFrame.items[itemName] = item;
       return true;
-    }
+    };
     
     this.addItemToInventory = function(itemName, item) {
       if(inventory[itemName])
@@ -41,11 +46,18 @@ var Game;
       inventory[itemName] = item;
       
       return true;
-    }
+    };
+    
+    this.end = function(message) {
+      gameActive = false;
+      
+      if(typeof message == "string")
+        endGameMessage = message;
+    };
     
     this.frameHasItem = function(itemName) {
       return typeof g.getItemFromFrame(itemName) != "undefined";
-    }
+    };
     
     this.frameVars = function(key, value) {
       if(!currentFrame.frameVars)
@@ -55,64 +67,66 @@ var Game;
         currentFrame.frameVars[key] = value;
       
       return currentFrame.frameVars[key];
-    }
+    };
     
     this.gameVars = function(key, value) {
       if(typeof value !== "undefined")
         gameVars[key] = value;
       
       return gameVars[key];
-    }
+    };
     
     this.getCurrentFrame = function() {
       return currentFrame;
-    }
+    };
     
     this.getCurrentFrameName = function() {
       return cFrameName;
-    }
+    };
     
     this.getItemFromFrame = function(itemName) {
       return currentFrame.items[itemName];
-    }
+    };
     
     this.getItemFromInventory = function(itemName) {
       return inventory[itemName];
-    }
+    };
     
     // TODO: return a copy of inventory so it can't be modified directly
     this.getInventory = function() {
       return inventory;
-    }
+    };
     
     this.initFrameVar = function(key, value) {
       if(typeof g.frameVars(key) === "undefined")
         g.frameVars(key, value);
-    }
+    };
     
     this.initGameVar = function(key, value) {
       if(typeof g.gameVars(key) === "undefined")
         g.gameVars(key, value);
-    }
+    };
     
     this.inventoryHasItem = function(itemName) {
       return typeof g.getItemFromInventory(itemName) != "undefined";
-    }
+    };
     
     this.itemAvailableInFrame = function(itemName) {
       var item = g.getItemFromFrame(itemName);
       
       return item && (!item.availability || item.availability.apply(g));
-    }
+    };
     
+    /*
     this.lose = function(message) {
       gameActive = false;
       
       if(message)
-        console.log(message);
+        return message;
       else
-        console.log("Game Over!");
-    }
+        return "Game Over!";
+    };
+    */
     
     this.moveTo = function(frameName) {
       if(!options.frames[frameName])
@@ -121,16 +135,16 @@ var Game;
       currentFrame = options.frames[frameName] ;
       cFrameName   = frameName                 ;
       
-      var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
-      console.log(intro);
-      
       if(currentFrame.onEnter)
         currentFrame.onEnter.apply(g);
-    }
+      
+      var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
+      return intro;
+    };
     
     this.play = function(input) {
       if(!gameActive)
-        return "...";
+        return endGameMessage;
       
       var splitIndex = input.indexOf(" ");
       var com, arg;
@@ -154,10 +168,10 @@ var Game;
         result = "I don't understand \"" + com + "\"";
       
       if(result)
-        console.log(result);
-      
-      return div; // suppresses "undefined" text, replaces it with line highlighting boundary between commands
-    }
+        return result;
+      else
+        return "";
+    };
     
     this.removeItemFromFrame = function(itemName) {
       if(!currentFrame.items[itemName])
@@ -165,7 +179,7 @@ var Game;
       
       delete currentFrame.items[itemName];
       return true;
-    }
+    };
     
     this.removeItemFromInventory = function(itemName) {
       if(!inventory[itemName])
@@ -173,16 +187,18 @@ var Game;
       
       delete inventory[itemName];
       return true;
-    }
+    };
     
+    /*
     this.win = function(message) {
       gameActive = false;
       
       if(message)
-        console.log(message);
+        return message;
       else
-        console.log("You Win!");
-    }
+        return "You Win!";
+    };
+    */
     
     var basicActions = {
       move   : function(input) {
