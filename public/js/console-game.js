@@ -1,14 +1,21 @@
-function NewGame(name, options) {
-  var game = new Game(name, function(text)
+function NewConsoleGame(name, options) {
+  var game = new Game(name, options, function(text)
   {
     console.log(text);
-  }, options);
+  });
   
   return function(command)
   {
     game.play(command);
+    // Have to return something to squelch console's "undefined" text
     return "--------------------------------------------"; // TODO: put this function in the below anonymous function so that it can access "div"
   };
+}
+
+function NewGame(name, options, textCallback) {
+  var game = new Game(name, options, textCallback);
+  
+  return game.play;
 }
 
 var Game;
@@ -16,7 +23,7 @@ var Game;
 (function() {
   var div = "--------------------------------------------";
   
-  Game = function(name, textCallback, options) {
+  Game = function(name, options, textCallback) {
     var g = this;
     
     var gameActive = true;

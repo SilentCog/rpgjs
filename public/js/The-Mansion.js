@@ -1,4 +1,4 @@
-var g = NewGame("The Mansion", {
+var mansionGame = {
   version        : "0.2",
   intro          : "Oh look!  A house!  Let's go in it!",
   frames         : {
@@ -236,4 +236,4 @@ var g = NewGame("The Mansion", {
       }
     }
   }
-})
+};
