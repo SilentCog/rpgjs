@@ -1,9 +1,13 @@
 function NewGame(name, options) {
-  var game = new Game(name, options);
+  var game = new Game(name, function(text)
+  {
+    console.log(text);
+  }, options);
   
   return function(command)
   {
-    console.log(game.play(command));
+    game.play(command);
+    return "--------------------------------------------"; // TODO: put this function in the below anonymous function so that it can access "div"
   };
 }
 
@@ -12,7 +16,7 @@ var Game;
 (function() {
   var div = "--------------------------------------------";
   
-  Game = function(name, options) {
+  Game = function(name, textCallback, options) {
     var g = this;
     
     var gameActive = true;
@@ -25,10 +29,11 @@ var Game;
     if(!options.frames.entry)
       throw "Game requires that exactly one frame be named \"entry\"";
     
-    console.log(name + " v" + options.version + "\r\n\r\n" + div + "\r\n\r\n" + options.intro);
+    // TODO: reintroduce this line without using the console
+    //console.log(name + " v" + options.version + "\r\n\r\n" + div + "\r\n\r\n" + options.intro);
     
-    var inventory = {};
-    var gameVars  = {};
+    var inventory = {} ;
+    var gameVars  = {} ;
     
     
     this.addItemToFrame = function(itemName, item) {
@@ -116,17 +121,7 @@ var Game;
       
       return item && (!item.availability || item.availability.apply(g));
     };
-    
-    /*
-    this.lose = function(message) {
-      gameActive = false;
-      
-      if(message)
-        return message;
-      else
-        return "Game Over!";
-    };
-    */
+
     
     this.moveTo = function(frameName) {
       if(!options.frames[frameName])
@@ -139,12 +134,16 @@ var Game;
         currentFrame.onEnter.apply(g);
       
       var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
-      return intro;
+      
+      textCallback(intro);
     };
     
     this.play = function(input) {
       if(!gameActive)
-        return endGameMessage;
+      {
+        textCallback(endGameMessage);
+        return;
+      }
       
       var splitIndex = input.indexOf(" ");
       var com, arg;
@@ -168,9 +167,7 @@ var Game;
         result = "I don't understand \"" + com + "\"";
       
       if(result)
-        return result;
-      else
-        return "";
+        textCallback(result);
     };
     
     this.removeItemFromFrame = function(itemName) {
@@ -188,17 +185,6 @@ var Game;
       delete inventory[itemName];
       return true;
     };
-    
-    /*
-    this.win = function(message) {
-      gameActive = false;
-      
-      if(message)
-        return message;
-      else
-        return "You Win!";
-    };
-    */
     
     var basicActions = {
       move   : function(input) {
@@ -280,6 +266,6 @@ var Game;
     basicActions.go   = basicActions.move   ;
     basicActions.take = basicActions.pickup ;
     
-    this.moveTo("entry");
+    return this.moveTo("entry");
   }
 })();
