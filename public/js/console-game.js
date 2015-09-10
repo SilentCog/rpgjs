@@ -1,5 +1,19 @@
-function NewGame(name, options) {
-  var game = new Game(name, options);
+function NewConsoleGame(name, options) {
+  var game = new Game(name, options, function(text)
+  {
+    console.log(text);
+  });
+  
+  return function(command)
+  {
+    game.play(command);
+    // Have to return something to squelch console's "undefined" text
+    return "--------------------------------------------"; // TODO: put this function in the below anonymous function so that it can access "div"
+  };
+}
+
+function NewGame(name, options, textCallback) {
+  var game = new Game(name, options, textCallback);
   
   return game.play;
 }
@@ -9,7 +23,7 @@ var Game;
 (function() {
   var div = "--------------------------------------------";
   
-  Game = function(name, options) {
+  Game = function(name, options, textCallback) {
     var g = this;
     
     var gameActive = true;
@@ -17,13 +31,16 @@ var Game;
     var currentFrame = null ;
     var cFrameName   = ""   ;
     
+    var endGameMessage = "..." ;
+    
     if(!options.frames.entry)
       throw "Game requires that exactly one frame be named \"entry\"";
     
-    console.log(name + " v" + options.version + "\r\n\r\n" + div + "\r\n\r\n" + options.intro);
+    // TODO: reintroduce this line without using the console
+    //console.log(name + " v" + options.version + "\r\n\r\n" + div + "\r\n\r\n" + options.intro);
     
-    var inventory = {};
-    var gameVars  = {};
+    var inventory = {} ;
+    var gameVars  = {} ;
     
     
     this.addItemToFrame = function(itemName, item) {
@@ -32,7 +49,7 @@ var Game;
       
       currentFrame.items[itemName] = item;
       return true;
-    }
+    };
     
     this.addItemToInventory = function(itemName, item) {
       if(inventory[itemName])
@@ -41,11 +58,18 @@ var Game;
       inventory[itemName] = item;
       
       return true;
-    }
+    };
+    
+    this.end = function(message) {
+      gameActive = false;
+      
+      if(typeof message == "string")
+        endGameMessage = message;
+    };
     
     this.frameHasItem = function(itemName) {
       return typeof g.getItemFromFrame(itemName) != "undefined";
-    }
+    };
     
     this.frameVars = function(key, value) {
       if(!currentFrame.frameVars)
@@ -55,64 +79,56 @@ var Game;
         currentFrame.frameVars[key] = value;
       
       return currentFrame.frameVars[key];
-    }
+    };
     
     this.gameVars = function(key, value) {
       if(typeof value !== "undefined")
         gameVars[key] = value;
       
       return gameVars[key];
-    }
+    };
     
     this.getCurrentFrame = function() {
       return currentFrame;
-    }
+    };
     
     this.getCurrentFrameName = function() {
       return cFrameName;
-    }
+    };
     
     this.getItemFromFrame = function(itemName) {
       return currentFrame.items[itemName];
-    }
+    };
     
     this.getItemFromInventory = function(itemName) {
       return inventory[itemName];
-    }
+    };
     
     // TODO: return a copy of inventory so it can't be modified directly
     this.getInventory = function() {
       return inventory;
-    }
+    };
     
     this.initFrameVar = function(key, value) {
       if(typeof g.frameVars(key) === "undefined")
         g.frameVars(key, value);
-    }
+    };
     
     this.initGameVar = function(key, value) {
       if(typeof g.gameVars(key) === "undefined")
         g.gameVars(key, value);
-    }
+    };
     
     this.inventoryHasItem = function(itemName) {
       return typeof g.getItemFromInventory(itemName) != "undefined";
-    }
+    };
     
     this.itemAvailableInFrame = function(itemName) {
       var item = g.getItemFromFrame(itemName);
       
       return item && (!item.availability || item.availability.apply(g));
-    }
-    
-    this.lose = function(message) {
-      gameActive = false;
-      
-      if(message)
-        console.log(message);
-      else
-        console.log("Game Over!");
-    }
+    };
+
     
     this.moveTo = function(frameName) {
       if(!options.frames[frameName])
@@ -121,16 +137,20 @@ var Game;
       currentFrame = options.frames[frameName] ;
       cFrameName   = frameName                 ;
       
-      var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
-      console.log(intro);
-      
       if(currentFrame.onEnter)
         currentFrame.onEnter.apply(g);
-    }
+      
+      var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
+      
+      g.print(intro);
+    };
     
     this.play = function(input) {
       if(!gameActive)
-        return "...";
+      {
+        g.print(endGameMessage);
+        return;
+      }
       
       var splitIndex = input.indexOf(" ");
       var com, arg;
@@ -154,9 +174,12 @@ var Game;
         result = "I don't understand \"" + com + "\"";
       
       if(result)
-        console.log(result);
-      
-      return div; // suppresses "undefined" text, replaces it with line highlighting boundary between commands
+        g.print(result);
+    };
+    
+    this.print = function(text) {
+      // we could set print directly to textCallback, but this provides a buffer preventing any tamporing with the actual textCallback function
+      textCallback(text);
     }
     
     this.removeItemFromFrame = function(itemName) {
@@ -165,7 +188,7 @@ var Game;
       
       delete currentFrame.items[itemName];
       return true;
-    }
+    };
     
     this.removeItemFromInventory = function(itemName) {
       if(!inventory[itemName])
@@ -173,16 +196,7 @@ var Game;
       
       delete inventory[itemName];
       return true;
-    }
-    
-    this.win = function(message) {
-      gameActive = false;
-      
-      if(message)
-        console.log(message);
-      else
-        console.log("You Win!");
-    }
+    };
     
     var basicActions = {
       move   : function(input) {
@@ -264,6 +278,6 @@ var Game;
     basicActions.go   = basicActions.move   ;
     basicActions.take = basicActions.pickup ;
     
-    this.moveTo("entry");
+    return this.moveTo("entry");
   }
 })();
