@@ -135,13 +135,13 @@ var Game;
       
       var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
       
-      textCallback(intro);
+      g.print(intro);
     };
     
     this.play = function(input) {
       if(!gameActive)
       {
-        textCallback(endGameMessage);
+        g.print(endGameMessage);
         return;
       }
       
@@ -167,8 +167,13 @@ var Game;
         result = "I don't understand \"" + com + "\"";
       
       if(result)
-        textCallback(result);
+        g.print(result);
     };
+    
+    this.print = function(text) {
+      // we could set print directly to textCallback, but this provides a buffer preventing any tamporing with the actual textCallback function
+      textCallback(text);
+    }
     
     this.removeItemFromFrame = function(itemName) {
       if(!currentFrame.items[itemName])
