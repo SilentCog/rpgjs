@@ -80,39 +80,6 @@
     <div id="GameArea"></div>
     <input type="text" id="GameInput" />
     <div id="Hint">(hint: you can play this game either above, or in your browser's console by sending commands to the function 'g')</div>
-    
-    <script type="application/javascript" src="js/jquery.js"       ></script>
     <script type="application/javascript" src="js/console-game.js" ></script>
-    <script type="application/javascript" src="js/The-Mansion.js"  ></script>
-    <script>
-      var g;
-      $(function() {
-        var gameArea  = $("#GameArea")  ;
-        var gameInput = $("#GameInput") ;
-        
-        var game = NewGame("The Mansion", mansionGame, function(text)
-        {
-          appendText(text);
-        });
-        
-        g = NewConsoleGame("The Mansion", mansionGame);
-        
-        function appendText(text)
-        {
-          gameArea.append("<div><span class='lineIndicator'>&gt;</span><span class='gameText'>" + text + "</span></div>");
-        }
-        
-        $(document).keypress(function(e) {
-          var text = gameInput.val();
-          if(e.which == 13 && text) {
-            appendText(text);
-            game(text);
-            gameInput.val("");
-            
-            gameArea.animate({ scrollTop : gameArea[0].scrollHeight - gameArea.height() });
-          }
-        });
-      });
-    </script>
   </body>
 </html>
