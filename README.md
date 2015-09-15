@@ -1,23 +1,27 @@
 # console-game
 
-API for creating easter-egg text-adventure game in your site's console.
+API for creating easter-egg text-adventure game in your browser's console, or visibly on your site.
 
 
 ## Playing Games
 
-Playing games created with console-game is easy!  Just open up your browser's console, and call the function you created with a command.  For example, if you created a game and saved it to a variable "g", you could move east by typing `g("move east")` into the console.  It's that simple!  For more info on what can be done, see "Basic Actions" and "Frame Actions".
+Playing games created with console-game is easy!
+
+Send commands to the function created with either `NewGame` or `NewConsoleGame`.  For example, if you created a game and saved it to a variable `g`, you could move east by using `g("move east")` (either in your code, or in your browser's console).  If the game was created using `NewConsoleGame`, the resulting text will automatically be printed to the console.  It's that simple!  For more info on what can be done, see "Basic Actions" and "Frame Actions".
 
 ## Using the API
 
 ### Creating a New Game
 
-To create a new game assign the results of the `NewGame` function to a variable.  For the rest of this guide we'll use `g` -
+To create a new game assign the results of either the `NewGame` or `NewConsoleGame` function to a variable.  For the rest of this guide we'll use `g` -
 
 ```javascript
 var g = NewGame("My New Game", {...});
 ```
 
-`NewGame` takes two arguments, the game name, and the "options" object (more on that later).  The game name can be anything and is only used when the console is first opened as an introduction.
+`NewConsoleGame` takes only two arguments:  The game name, and the "options" object (more on that later).  The game name can be anything and is only used when the console is first opened as an introduction.
+
+`NewGame` takes three arguments:  The same two as `NewConsoleGame` plus an additional `textCallback`.  `textCallback` should be a function which is called every time the game needs to print text - it's only parameter is the new text that needs to be displayed.
 
 ### The Options Object
 
@@ -142,6 +146,9 @@ Adds the item `item` to the current frame under the name `itemName`.  Returns tr
 **addItemToInventory** (itemName : *required string*, item : *required object*) : *boolean*
 Adds the item `item` to the player's inventory under the name `itemName`.  Returns true if successful, false if not (item already in frame).
 
+**end** (message : *optional string*) : *void*
+Ends the game.  You can specify a message that will be displayed to the user if any further input is entered with the `message` argument.
+
 **frameHasItem** (itemName : *required string*) : *boolean*
 Returns true if the current frame has an item named `itemName` in it.
 
@@ -178,14 +185,14 @@ Returns true if the player's inventory has an item named `itemName` in it.
 **itemAvailableInFrame** (itemName : *required string*) : *boolean*
 Similar to frameHasItem, only also checks if item is available.
 
-**lose** (message : *optional string*) : *void*
-Ends the game in a loss.  Displays message `message`.
-
 **moveTo** (frameName : *required string*) : *void*
 Changes the current frame to `frameName`.
 
 **play** (input : *required string*) : *void*
 Can be used to issue commands as the player would.  Simply pass a string as you would if you were a player.
+
+**print** (text : *required string*) : *void*
+Sends `text` to the text callback method specified in `NewGame`.  For `NewConsoleGame`, this writes to the browser console.
 
 **removeItemFromFrame** (itemName : *required string*) : *boolean*
 Removes the item `itemName` from the current frame.  Returns true if successful, false if not (item not found in frame).
@@ -193,24 +200,21 @@ Removes the item `itemName` from the current frame.  Returns true if successful,
 **removeItemFromInventory** (itemName : *required string*) : *boolean*
 Removes the item `itemName` from the player's inventory.  Returns true if successful, false if not (item not found in inventory).
 
-**win** (message : *optional string*) : *void*
-Ends the game with victory conditions met.  Displays message `message`.
-
 ## Development Server
 
 Install node.js and run this to install dependencies:
 
-```
+```bash
 npm install
 ```
 
 Then this to start the server:
 
-```
+```bash
 npm start
 ```
 
-Open your browser to `http://localhost:1337'
+Open your browser to `http://localhost:1337`
 
 ## License and Editing the API
 
