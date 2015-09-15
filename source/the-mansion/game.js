@@ -1,12 +1,4 @@
-var Game = require('../game/game');
-
-function NewGame(name, options) {
-  var game = new Game(name, options);
-  
-  return game.play;
-}
-
-module.exports = NewGame("The Mansion", {
+module.exports = {
   version        : "0.2",
   intro          : "Oh look!  A house!  Let's go in it!",
   frames         : {
@@ -72,7 +64,7 @@ module.exports = NewGame("The Mansion", {
               }
               else
                 return "The drawer is already shut";
-              break;
+              break;  
               
             case "":
               return "What did you want me to shut?";
@@ -225,7 +217,7 @@ module.exports = NewGame("The Mansion", {
         this.initFrameVar("holeDug", false);
       },
       inspect      : function() {
-        if(this.FrameVars("holeDug"))
+        if(this.frameVars("holeDug"))
           return "The hole you dug is still there.  There's a large chest sitting in it.";
         else
           return "The ground here is really soft.";
@@ -242,9 +234,12 @@ module.exports = NewGame("The Mansion", {
         },
         "open" : function(input) {
           if(this.frameVars("holeDug") && input === "chest")
-            this.win("You found the treasure!  Congratulations!");
+          {
+            this.end("You already found the treasure!  Good job!");
+            return "You found the treasure!  Congratulations!";
+          }
         }
       }
     }
   }
-});
+};
