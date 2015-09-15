@@ -1,35 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
-    <title>Console.log() Role Playing Game by mimiflynn</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
+    
+    <title>Open that console</title>
+    
+    <style>
+      body
+      {
+        background-color:           #7C4CCF;
+        color:                      #FCD01E;
+        font-size:                  20px;
+        font-family:                VT323, Terminal, "Courier New", Courier, monospace;
+      }
+      
+      h1
+      {
+        font-weigh:                 normal;
+        text-align:                 center;
+      }
+      
+      #GameArea,
+      #GameInput
+      {
+        color:                      white;
+        font-size:                  1em;
+        border:                     2px solid #FCD01E;
+        display:                    block;
+        padding:                    1em;
+        width:                      30em;
+        margin:                     0 auto;
+        color:                      white;
+      }
+      
+      #GameArea
+      {
+        border-bottom-style:        none;
+        height:                     20em;
+        border-radius:              1em 1em 0 0;
+        background-color:           #8C60D6;
+        overflow:                   hidden;
+      }
+      
+      #GameInput
+      {
+        font:                       inherit;
+        top:                        22em;
+        border-radius:              0 0 1em 1em;
+        background-color:           #A783E6;
+        outline:                    none;
+      }
+      
+      #Hint
+      {
+        font-size:                  1em;
+        width:                      30em;
+        margin:                     1em auto;
+        text-align:                 center;
+      }
+      
+      .lineIndicator
+      {
+        color:                      #FCD01E;
+        float:                      left;
+      }
+      
+      .gameText
+      {
+        display:                    block;
+        margin-left:                1em;
+      }
+    </style>
   </head>
-
   <body>
-
-    <header>
-      <div class="container">
-        <h1>Console.log() Role Playing Game</h1>
-        <h2>Easter egg console.log game in the text based RPG fashion.</h2>
-
-        <section id="downloads">
-          <a href="https://github.com/mimiflynn/console-game/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/mimiflynn/console-game/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/mimiflynn/console-game" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
-
-    <div class="container">
-      <section id="main_content">
-        <h3>
-<a id="open-that-console-yo" class="anchor" href="#open-that-console-yo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Open that console, yo!</h3>
-      </section>
-    </div>
-    <script type="application/javascript" src="public/js/console-game.js"></script>
-    <script type="application/javascript" src="public/js/westward-bound.js"></script>
+    <h1>Welcome to the Game</h1>
+    <div id="GameArea"></div>
+    <input type="text" id="GameInput" />
+    <div id="Hint">(hint: you can play this game either above, or in your browser's console by sending commands to the function 'g')</div>
+    
+    <script type="application/javascript" src="js/jquery.js"       ></script>
+    <script type="application/javascript" src="js/console-game.js" ></script>
+    <script type="application/javascript" src="js/The-Mansion.js"  ></script>
+    <script>
+      var g;
+      $(function() {
+        var gameArea  = $("#GameArea")  ;
+        var gameInput = $("#GameInput") ;
+        
+        var game = NewGame("The Mansion", mansionGame, function(text)
+        {
+          appendText(text);
+        });
+        
+        g = NewConsoleGame("The Mansion", mansionGame);
+        
+        function appendText(text)
+        {
+          gameArea.append("<div><span class='lineIndicator'>&gt;</span><span class='gameText'>" + text + "</span></div>");
+        }
+        
+        $(document).keypress(function(e) {
+          var text = gameInput.val();
+          if(e.which == 13 && text) {
+            appendText(text);
+            game(text);
+            gameInput.val("");
+            
+            gameArea.animate({ scrollTop : gameArea[0].scrollHeight - gameArea.height() });
+          }
+        });
+      });
+    </script>
   </body>
 </html>
