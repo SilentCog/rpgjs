@@ -1,4 +1,4 @@
-module.exports = {
+var theMansion = {
   version        : "0.2",
   intro          : "Oh look!  A house!  Let's go in it!",
   frames         : {
@@ -243,3 +243,10 @@ module.exports = {
     }
   }
 };
+
+
+
+if(typeof module !== 'undefined' && module.exports)
+{
+  module.exports = theMansion;
+}

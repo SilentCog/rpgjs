@@ -74,6 +74,15 @@
         margin-left:                1em;
       }
     </style>
+    <script src="/js/socket.io.js"></script>
+    <script>
+      var socket = io.connect('http://localhost');
+      socket.on('textCallback', function (data)
+      {
+        console.log(data);
+      });
+      socket.emit('gameCommand', { command : 'inpsect' });
+    </script>
   </head>
   <body>
     <h1>Welcome to the Game</h1>

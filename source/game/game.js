@@ -18,6 +18,13 @@ function NewGame(name, options, textCallback) {
   return game.play;
 }
 
+if(typeof module !== 'undefined' && module.exports)
+{
+  module.exports = {
+    NewGame : NewGame
+  };
+}
+
 var Game;
 
 (function() {
