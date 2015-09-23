@@ -37,13 +37,11 @@ var Game;
     var currentFrame = null ;
     var cFrameName   = ""   ;
     
+    
     var endGameMessage = "..." ;
     
     if(!options.frames.entry)
       throw "Game requires that exactly one frame be named \"entry\"";
-    
-    // TODO: reintroduce this line without using the console
-    //console.log(name + " v" + options.version + "\r\n\r\n" + div + "\r\n\r\n" + options.intro);
     
     var inventory = {} ;
     var gameVars  = {} ;
