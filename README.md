@@ -204,17 +204,17 @@ Removes the item `itemName` from the player's inventory.  Returns true if succes
 
 Install node.js and run this to install dependencies:
 
-```
+```bash
 npm install
 ```
 
 Then this to start the server:
 
-```
+```bash
 npm start
 ```
 
-Open your browser to `http://localhost:1337'
+Open your browser to `http://localhost:1337`
 
 ## License and Editing the API
 

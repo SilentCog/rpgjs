@@ -1,11 +1,11 @@
-var mansionGame = {
+module.exports = {
   version        : "0.2",
   intro          : "Oh look!  A house!  Let's go in it!",
   frames         : {
     "entry" : {
       intro        : "You're in the entry way to the building.  To the north is a hallway.",
       inspect      : function() {
-        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it"
+        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it";
       },
       onEnter      : function() {
         this.initFrameVar("doorOpen",   true  );
@@ -55,6 +55,7 @@ var mansionGame = {
               }
               else
                 return "The door is already shut";
+              break;
               
             case "drawer":
               if(this.frameVars("drawerOpen")) {
@@ -63,6 +64,7 @@ var mansionGame = {
               }
               else
                 return "The drawer is already shut";
+              break;  
               
             case "":
               return "What did you want me to shut?";
@@ -80,6 +82,7 @@ var mansionGame = {
               }
               else
                 return "The door is already open";
+              break;
               
             case "drawer":
               if(!this.frameVars("drawerOpen")) {
@@ -88,6 +91,7 @@ var mansionGame = {
               }
               else
                 return "The drawer is already open";
+              break;
               
             case "":
               return "What did you want me to open?";
@@ -163,6 +167,7 @@ var mansionGame = {
               }
               else
                 return "The door is already shut";
+              break;
               
             case "":
               return "What did you want me to shut?";
@@ -184,6 +189,7 @@ var mansionGame = {
               }
               else
                 return "The door is already open";
+              break;
               
             case "":
               return "What did you want me to open?";
@@ -214,7 +220,7 @@ var mansionGame = {
         if(this.frameVars("holeDug"))
           return "The hole you dug is still there.  There's a large chest sitting in it.";
         else
-          return "The ground here is really soft."
+          return "The ground here is really soft.";
       },
       movement     : {
         "east" : function() {
