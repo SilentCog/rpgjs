@@ -2,21 +2,17 @@ var $ = require('jquery');
 var Game = require('./game/game');
 var mansionGame = require('./the-mansion/game');
 
-var g;
-
 $(function() {
   var gameArea  = $("#GameArea")  ;
   var gameInput = $("#GameInput") ;
   
-  var game = Game.NewGame("The Mansion", mansionGame, function(text)
-  {
+  var game = Game.NewGame("The Mansion", mansionGame, function(text) {
     appendText(text);
   });
   
-  g = Game.NewConsoleGame("The Mansion", mansionGame);
+  window.g = Game.NewConsoleGame("The Mansion", mansionGame);
   
-  function appendText(text)
-  {
+  function appendText(text) {
     gameArea.append("<div><span class='lineIndicator'>&gt;</span><span class='gameText'>" + text + "</span></div>");
   }
   
