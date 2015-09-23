@@ -1,19 +1,25 @@
-var $ = require('jquery');
-var Game = require('./game/game');
-var mansionGame = require('./the-mansion/game');
+var $           = require('jquery')             ;
+//var io          = require('socket.io')          ;
+var mansionGame = require('./the-mansion/game') ;
+var gameMaker   = require('./game/game')        ;
 
 var g;
+//var socket = io.connect('http://localhost');
+//socket.on('textCallback', function (data)
+//{
+//  console.log(data);
+//});
 
 $(function() {
   var gameArea  = $("#GameArea")  ;
   var gameInput = $("#GameInput") ;
   
-  var game = Game.NewGame("The Mansion", mansionGame, function(text)
+  var game = gameMaker.NewGame("The Mansion", mansionGame, function(text)
   {
     appendText(text);
   });
   
-  g = Game.NewConsoleGame("The Mansion", mansionGame);
+  g = gameMaker.NewConsoleGame("The Mansion", mansionGame);
   
   function appendText(text)
   {
@@ -29,5 +35,12 @@ $(function() {
       
       gameArea.animate({ scrollTop : gameArea[0].scrollHeight - gameArea.height() });
     }
+  });
+  
+  console.log($("#Emit").text());
+  $("#Emit").click(function()
+  {
+    console.log("emitting");
+//    socket.emit('gameCommand', { command : 'inpsect' });
   });
 });

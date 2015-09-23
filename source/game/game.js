@@ -18,8 +18,7 @@ function NewGame(name, options, textCallback) {
   return game.play;
 }
 
-if(typeof module !== 'undefined' && module.exports)
-{
+if(typeof module !== 'undefined' && module.exports) {
   module.exports = {
     NewGame : NewGame
   };

@@ -7,6 +7,8 @@
     <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
     
     <title>Open that console</title>
+    <!--script src="/js/console-game.js"></script-->
+    <script src="/js/remote-game.js"></script>
     
     <style>
       body
@@ -74,21 +76,12 @@
         margin-left:                1em;
       }
     </style>
-    <script src="/js/socket.io.js"></script>
-    <script>
-      var socket = io.connect('http://localhost');
-      socket.on('textCallback', function (data)
-      {
-        console.log(data);
-      });
-      socket.emit('gameCommand', { command : 'inpsect' });
-    </script>
   </head>
   <body>
     <h1>Welcome to the Game</h1>
     <div id="GameArea"></div>
     <input type="text" id="GameInput" />
     <div id="Hint">(hint: you can play this game either above, or in your browser's console by sending commands to the function 'g')</div>
-    <script type="application/javascript" src="js/console-game.js" ></script>
+    <button id="Emit">Emit</button>
   </body>
 </html>
