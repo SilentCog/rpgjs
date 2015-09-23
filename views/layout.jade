@@ -1,0 +1,17 @@
+doctype html
+html
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+		link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(type='text/javascript', src='/javascripts/jquery-2.1.4.min.js')
+	body
+		div.container
+			div.row
+				div.col-sm-6.col-md-4.col-md-offset-4
+					block content
+					span.clearfix
+					#message
+						if message
+							h1.text-center.error-message #{message}

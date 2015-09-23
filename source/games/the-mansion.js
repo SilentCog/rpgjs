@@ -1,11 +1,11 @@
-module.exports = {
+var theMansion = {
   version        : "0.2",
   intro          : "Oh look!  A house!  Let's go in it!",
   frames         : {
     "entry" : {
       intro        : "You're in the entry way to the building.  To the north is a hallway.",
       inspect      : function() {
-        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it";
+        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".";
       },
       onEnter      : function() {
         this.initFrameVar("doorOpen",   true  );
@@ -243,3 +243,10 @@ module.exports = {
     }
   }
 };
+
+
+
+if(typeof module !== 'undefined' && module.exports)
+{
+  module.exports = theMansion;
+}
