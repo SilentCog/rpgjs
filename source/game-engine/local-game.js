@@ -1,35 +1,29 @@
-function NewConsoleGame(name, options) {
-  var game = new Game(name, options, function(text)
-  {
-    console.log(text);
-  });
-  
-  return function(command)
-  {
-    game.play(command);
-    // Have to return something to squelch console's "undefined" text
-    return "--------------------------------------------"; // TODO: put this function in the below anonymous function so that it can access "div"
-  };
-}
-
-function NewGame(name, options, textCallback) {
-  var game = new Game(name, options, textCallback);
-  
-  return game.play;
-}
-
-if(typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    NewGame : NewGame
-  };
-}
-
-var Game;
+var GameEngine = {};
 
 (function() {
   var div = "--------------------------------------------";
   
-  Game = function(name, options, textCallback) {
+  GameEngine.NewConsoleGame = function(name, options) {
+    var game = new Game(name, options, function(text)
+    {
+      console.log(text);
+    });
+    
+    return function(command)
+    {
+      game.play(command);
+      // Have to return something to squelch console's "undefined" text
+      return div;
+    }
+  };
+
+  GameEngine.NewGame = function(name, options, textCallback) {
+    var game = new Game(name, options, textCallback);
+    
+    return game.play;
+  };
+
+  var Game = function(name, options, textCallback) {
     var g = this;
     
     var gameActive = true;
@@ -286,7 +280,6 @@ var Game;
   };
 })();
 
-module.exports = {
-  NewConsoleGame: NewConsoleGame,
-  NewGame: NewGame
-};
+if(typeof module !== 'undefined' && module.exports) {
+  module.exports = GameEngine;
+}

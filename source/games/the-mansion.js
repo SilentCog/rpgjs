@@ -5,7 +5,7 @@ var theMansion = {
     "entry" : {
       intro        : "You're in the entry way to the building.  To the north is a hallway.",
       inspect      : function() {
-        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it";
+        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".";
       },
       onEnter      : function() {
         this.initFrameVar("doorOpen",   true  );

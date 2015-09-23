@@ -9211,86 +9211,39 @@ return jQuery;
 }));
 
 },{}],2:[function(require,module,exports){
-var $           = require('jquery')             ;
-//var io          = require('socket.io')          ;
-var mansionGame = require('./the-mansion/game') ;
-var gameMaker   = require('./game/game') ;
+var GameView   = require('./js/game-view')           ;
+var GameEngine = require('./game-engine/local-game') ;
+var gameData   = require('./games/the-mansion')      ;
 
-var g;
-//var socket = io.connect('http://localhost');
-//socket.on('textCallback', function (data)
-//{
-//  console.log(data);
-//});
-
-$(function() {
-  var gameArea  = $("#GameArea")  ;
-  var gameInput = $("#GameInput") ;
-  
-  var game = gameMaker.NewGame("The Mansion", mansionGame, function(text)
-  {
-    appendText(text);
-  });
-  
-  g = gameMaker.NewConsoleGame("The Mansion", mansionGame);
-  
-  function appendText(text)
-  {
-    gameArea.append("<div><span class='lineIndicator'>&gt;</span><span class='gameText'>" + text + "</span></div>");
-  }
-  
-  $(document).keypress(function(e) {
-    var text = gameInput.val();
-    if(e.which == 13 && text) {
-      appendText(text);
-      game(text);
-      gameInput.val("");
-      
-      gameArea.animate({ scrollTop : gameArea[0].scrollHeight - gameArea.height() });
-    }
-  });
-  
-  console.log($("#Emit").text());
-  $("#Emit").click(function()
-  {
-    console.log("emitting");
-//    socket.emit('gameCommand', { command : 'inpsect' });
-  });
-});
-
-},{"./game/game":3,"./the-mansion/game":4,"jquery":1}],3:[function(require,module,exports){
-function NewConsoleGame(name, options) {
-  var game = new Game(name, options, function(text)
-  {
-    console.log(text);
-  });
-  
-  return function(command)
-  {
-    game.play(command);
-    // Have to return something to squelch console's "undefined" text
-    return "--------------------------------------------"; // TODO: put this function in the below anonymous function so that it can access "div"
-  };
-}
-
-function NewGame(name, options, textCallback) {
-  var game = new Game(name, options, textCallback);
-  
-  return game.play;
-}
-
-if(typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    NewGame : NewGame
-  };
-}
-
-var Game;
+var g = GameEngine.NewConsoleGame("The Mansion", gameData);
+GameView.addCommandReceiver(GameEngine.NewGame("The Mansion", gameData, GameView.appendText));
+},{"./game-engine/local-game":3,"./games/the-mansion":4,"./js/game-view":5}],3:[function(require,module,exports){
+var GameEngine = {};
 
 (function() {
   var div = "--------------------------------------------";
   
-  Game = function(name, options, textCallback) {
+  GameEngine.NewConsoleGame = function(name, options) {
+    var game = new Game(name, options, function(text)
+    {
+      console.log(text);
+    });
+    
+    return function(command)
+    {
+      game.play(command);
+      // Have to return something to squelch console's "undefined" text
+      return div;
+    }
+  };
+
+  GameEngine.NewGame = function(name, options, textCallback) {
+    var game = new Game(name, options, textCallback);
+    
+    return game.play;
+  };
+
+  var Game = function(name, options, textCallback) {
     var g = this;
     
     var gameActive = true;
@@ -9298,13 +9251,11 @@ var Game;
     var currentFrame = null ;
     var cFrameName   = ""   ;
     
+    
     var endGameMessage = "..." ;
     
     if(!options.frames.entry)
       throw "Game requires that exactly one frame be named \"entry\"";
-    
-    // TODO: reintroduce this line without using the console
-    //console.log(name + " v" + options.version + "\r\n\r\n" + div + "\r\n\r\n" + options.intro);
     
     var inventory = {} ;
     var gameVars  = {} ;
@@ -9549,10 +9500,9 @@ var Game;
   };
 })();
 
-module.exports = {
-  NewConsoleGame: NewConsoleGame,
-  NewGame: NewGame
-};
+if(typeof module !== 'undefined' && module.exports) {
+  module.exports = GameEngine;
+}
 
 },{}],4:[function(require,module,exports){
 var theMansion = {
@@ -9562,7 +9512,7 @@ var theMansion = {
     "entry" : {
       intro        : "You're in the entry way to the building.  To the north is a hallway.",
       inspect      : function() {
-        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".  A shovel leans against it";
+        return "There's a drawer against the wall" + (this.itemAvailableInFrame("key") ? ", there's a key inside of it" : "") + ".";
       },
       onEnter      : function() {
         this.initFrameVar("doorOpen",   true  );
@@ -9807,4 +9757,65 @@ if(typeof module !== 'undefined' && module.exports)
 {
   module.exports = theMansion;
 }
-},{}]},{},[2]);
+},{}],5:[function(require,module,exports){
+var $ = require('jquery');
+
+var GameView = {};
+
+(function() {
+  // catch any lines that come in before document.ready
+  var loaded           = false ;
+  var preLoadLines     = []    ;
+  var commandReceivers = []    ;
+  
+  var gameArea, gameInput;
+  
+  GameView.appendText = function(text) {
+    if(loaded)
+    {
+      gameArea.append("<div><span class='lineIndicator'>&gt;</span><span class='gameText'>" + text + "</span></div>");
+      gameArea.animate({ scrollTop : gameArea[0].scrollHeight - gameArea.height() });
+    }
+    else
+      preLoadLines.push(text);
+  };
+  
+  GameView.addCommandReceiver = function(receiver) {
+    commandReceivers.push(receiver);
+  };
+  
+  function sendCommandToReceivers(command) {
+    for(var i = 0; i < commandReceivers.length; i++)
+      commandReceivers[i](command);
+  };
+  
+  $(function() {
+    gameArea  = $("#GameArea")  ;
+    gameInput = $("#GameInput") ;
+    
+    function init() {
+      loaded = true;
+      
+      for(var i = 0; i < preLoadLines.length; i++)
+        GameView.appendText(preLoadLines[i]);
+    }
+    
+    
+    $(document).keypress(function(e) {
+      var text = gameInput.val();
+      if(e.which == 13 && text) {
+        GameView.appendText(text);
+        
+        sendCommandToReceivers(text);
+        
+        gameInput.val("");
+      }
+    });
+    
+    init();
+  });
+})();
+
+module.exports = GameView;
+
+},{"jquery":1}]},{},[2]);
