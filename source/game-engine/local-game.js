@@ -24,6 +24,11 @@ var GameEngine = {};
   };
 
   var Game = function(name, options, textCallback) {
+    
+    // TODO: WE MODIFY OPTIONS - we NEED to make a copy of it before
+    //       continuing.  We don't know that the user doesn't want
+    //       to use the option elsewhere, and we KNOW that we're
+    //       using the same game def multiple times for remote games!
     var g = this;
     
     var gameActive = true;
