@@ -48,18 +48,22 @@ io.on('connection', function (socket)
   {
     ioSess.game(data.command);
   });
-    
-  //for(var p in socket.request)
-    //console.log(p + " : " + typeof socket.request[p]);
 });
 
-/*
 app.get('/', function(req, res)
 {
-  console.log("\r\n\r\nroot\r\n\r\n");
-  res.sendFile(path.join(__dirname, "public/index.html"));
+  res.redirect("/local-game");
 });
-*/
+
+app.get('/local-game', function(req, res)
+{
+  res.sendFile(path.join(__dirname, "public/local-game.html"));
+});
+
+app.get('/remote-game', function(req, res)
+{
+  res.sendFile(path.join(__dirname, "public/remote-game.html"));
+});
 
 // uncomment after placing your favicon in /public
 app.use(logger('dev'));
