@@ -9215,6 +9215,7 @@ var GameView   = require('./js/game-view')            ;
 var GameEngine = require('./game-engine/remote-game') ;
 
 GameView.addCommandReceiver(GameEngine.LinkToGame(GameView.appendText));
+window.g = GameEngine.LinkToGameInConsole();
 
 },{"./game-engine/remote-game":3,"./js/game-view":4}],3:[function(require,module,exports){
 var io     = require('../js/socket.io')     ;
@@ -9223,6 +9224,7 @@ var socket = io.connect('http://localhost') ;
 var GameEngine = {};
 
 (function() {
+  var div = "--------------------------------------------";
   var linkedCallbacks = [];
   
   GameEngine.LinkToGame = function(textCallback) {
@@ -9234,11 +9236,23 @@ var GameEngine = {};
     };
   }
   
+  GameEngine.LinkToGameInConsole = function() {
+    linkedCallbacks.push(function(text) {
+      console.log(text);
+    });
+    
+    return function(command)
+    {
+      socket.emit("gameCommand", { command : command });
+      return div;
+    };
+  };
+  
   socket.on('textCallback', function (data) {
     for(var i = 0; i < linkedCallbacks.length; i++)
       linkedCallbacks[i](data.text);
   });
-})()
+})();
 
 if(typeof module !== 'undefined' && module.exports) {
   module.exports = GameEngine;
