@@ -21,7 +21,8 @@ module.exports = function (grunt) {
           }
         },
         files: {
-          'public/js/console-game.js': 'source/app.js'
+          'public/js/local-game.js'  : 'source/app.local.js'  ,
+          'public/js/remote-game.js' : 'source/app.remote.js'
         }
       }
     },
