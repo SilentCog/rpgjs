@@ -26,6 +26,7 @@
     "grunt-contrib-watch": "^0.6.1"
   },
   "dependencies": {
+    "debug": "^2.2.0",
     "express": "^4.13.3",
     "express-session": "^1.11.3",
     "jquery": "^2.1.4",
