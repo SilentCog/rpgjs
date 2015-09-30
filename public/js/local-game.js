@@ -9224,17 +9224,15 @@ var GameEngine = {};
   var div = "--------------------------------------------";
   
   GameEngine.NewConsoleGame = function(name, options) {
-    var game = new Game(name, options, function(text)
-    {
+    var game = new Game(name, options, function(text) {
       console.log(text);
     });
     
-    return function(command)
-    {
+    return function(command) {
       game.play(command);
       // Have to return something to squelch console's "undefined" text
       return div;
-    }
+    };
   };
 
   GameEngine.NewGame = function(name, options, textCallback) {
@@ -9243,7 +9241,7 @@ var GameEngine = {};
     return game.play;
   };
 
-  var Game = function(name, options, textCallback) {
+  var Game = function(name, gameData, textCallback) {
     var g = this;
     
     var gameActive = true;
@@ -9254,18 +9252,34 @@ var GameEngine = {};
     
     var endGameMessage = "..." ;
     
-    if(!options.frames.entry)
+    if(!gameData.frames.entry)
       throw "Game requires that exactly one frame be named \"entry\"";
     
-    var inventory = {} ;
-    var gameVars  = {} ;
+    var inventory  = {} ;
+    var gameVars   = {} ;
+    var frameVars  = {} ;
+    var frameItems = {} ;
     
+    function makeItemsOnFrame(frameName) {
+      if(!frameName)
+        frameName = cFrameName;
+      
+      if(!frameItems[frameName])
+      {
+        frameItems[frameName] = {};
+        
+        for(var i in gameData.frames[frameName].items)
+          frameItems[frameName][i] = gameData.frames[frameName].items[i];
+      }
+    }
     
     this.addItemToFrame = function(itemName, item) {
-      if(currentFrame.items[itemName])
+      makeItemsOnFrame();
+      
+      if(frameItems[cFrameName][itemName])
         return false;
       
-      currentFrame.items[itemName] = item;
+      frameItems[cFrameName][itemName] = item;
       return true;
     };
     
@@ -9290,13 +9304,13 @@ var GameEngine = {};
     };
     
     this.frameVars = function(key, value) {
-      if(!currentFrame.frameVars)
-        currentFrame.frameVars = {};
+      if(!frameVars[cFrameName])
+        frameVars[cFrameName] = {};
       
       if(typeof value !== "undefined")
-        currentFrame.frameVars[key] = value;
+        frameVars[cFrameName][key] = value;
       
-      return currentFrame.frameVars[key];
+      return frameVars[cFrameName][key];
     };
     
     this.gameVars = function(key, value) {
@@ -9315,7 +9329,9 @@ var GameEngine = {};
     };
     
     this.getItemFromFrame = function(itemName) {
-      return currentFrame.items[itemName];
+      makeItemsOnFrame();
+      
+      return frameItems[cFrameName][itemName];
     };
     
     this.getItemFromInventory = function(itemName) {
@@ -9349,11 +9365,11 @@ var GameEngine = {};
 
     
     this.moveTo = function(frameName) {
-      if(!options.frames[frameName])
+      if(!gameData.frames[frameName])
         throw "Could not find frame \"" + frameName + "\"";
       
-      currentFrame = options.frames[frameName] ;
-      cFrameName   = frameName                 ;
+      currentFrame = gameData.frames[frameName] ;
+      cFrameName   = frameName                  ;
       
       if(currentFrame.onEnter)
         currentFrame.onEnter.apply(g);
@@ -9401,10 +9417,12 @@ var GameEngine = {};
     };
     
     this.removeItemFromFrame = function(itemName) {
-      if(!currentFrame.items[itemName])
+      makeItemsOnFrame();
+      
+      if(!frameItems[cFrameName][itemName])
         return false;
       
-      delete currentFrame.items[itemName];
+      delete frameItems[cFrameName][itemName];
       return true;
     };
     
@@ -9441,7 +9459,9 @@ var GameEngine = {};
           return "I already told you everything I know!";
       },
       pickup : function(itemName) {
-        var item = currentFrame.items[itemName];
+        makeItemsOnFrame();
+        
+        var item = frameItems[cFrameName][itemName];
         
         if(!item || !g.itemAvailableInFrame(itemName))
           return "I can't pick that up.";
