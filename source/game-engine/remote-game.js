@@ -13,13 +13,13 @@ var GameEngine = {};
     {
       socket.emit("gameCommand", { command : command });
     };
-  }
+  };
   
   socket.on('textCallback', function (data) {
     for(var i = 0; i < linkedCallbacks.length; i++)
       linkedCallbacks[i](data.text);
   });
-})()
+})();
 
 if(typeof module !== 'undefined' && module.exports) {
   module.exports = GameEngine;
