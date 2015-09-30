@@ -30,7 +30,8 @@ io.use(function(socket, next) {
 
 app.use(sessionMiddleware);
 
-server.listen(80);
+server.listen(1337);
+
 io.on('connection', function (socket)
 {
   var ioSess = socket.request.session;
