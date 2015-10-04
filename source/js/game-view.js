@@ -27,7 +27,7 @@ var GameView = {};
   function sendCommandToReceivers(command) {
     for(var i = 0; i < commandReceivers.length; i++)
       commandReceivers[i](command);
-  };
+  }
   
   $(function() {
     gameArea  = $("#GameArea")  ;

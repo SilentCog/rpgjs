@@ -1,4 +1,4 @@
-var io     = require('../js/socket.io')     ;
+var io     = require('socket.io-client')    ;
 var socket = io.connect('http://localhost') ;
 
 var GameEngine = {};
@@ -14,7 +14,7 @@ var GameEngine = {};
     {
       socket.emit("gameCommand", { command : command });
     };
-  }
+  };
   
   GameEngine.LinkToGameInConsole = function() {
     linkedCallbacks.push(function(text) {

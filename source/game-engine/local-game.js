@@ -84,13 +84,17 @@ var GameEngine = {};
     };
     
     this.frameVars = function(key, value) {
-      if(!frameVars[cFrameName])
-        frameVars[cFrameName] = {};
+      return g.frameVarsOnFrame(cFrameName, key, value);
+    };
+    
+    this.frameVarsOnFrame = function(frameName, key, value) {
+      if(!frameVars[frameName])
+        frameVars[frameName] = {};
       
       if(typeof value !== "undefined")
-        frameVars[cFrameName][key] = value;
+        frameVars[frameName][key] = value;
       
-      return frameVars[cFrameName][key];
+      return frameVars[frameName][key];
     };
     
     this.gameVars = function(key, value) {
