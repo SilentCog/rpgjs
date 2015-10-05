@@ -32,13 +32,23 @@ var GameEngine = {};
     
     var endGameMessage = "..." ;
     
-    if(!gameData.frames.entry)
-      throw "Game requires that exactly one frame be named \"entry\"";
-    
     var inventory  = {} ;
     var gameVars   = {} ;
     var frameVars  = {} ;
     var frameItems = {} ;
+    
+    function init() {
+      if(!gameData.frames.entry)
+        throw "Game requires that exactly one frame be named \"entry\"";
+      
+      // Aliases
+      basicActions.go   = basicActions.move   ;
+      basicActions.take = basicActions.pickup ;
+      
+      gameData.setup.apply(g);
+      
+      this.moveTo("entry");
+    }
     
     function makeItemsOnFrame(frameName) {
       if(!frameName)
@@ -296,11 +306,7 @@ var GameEngine = {};
       }
     };
     
-    // Aliases
-    basicActions.go   = basicActions.move   ;
-    basicActions.take = basicActions.pickup ;
-    
-    return this.moveTo("entry");
+    init();
   };
 })();
 

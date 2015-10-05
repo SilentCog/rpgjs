@@ -3,6 +3,7 @@ var theMansion = {
   intro          : "Oh look!  A house!  Let's go in it!",
   setup          : function()
   {
+    alert("test");
   },
   frames         : {
     "entry" : {
