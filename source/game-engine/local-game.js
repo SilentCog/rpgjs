@@ -29,7 +29,6 @@ var GameEngine = {};
     var currentFrame = null ;
     var cFrameName   = ""   ;
     
-    
     var endGameMessage = "..." ;
     
     var inventory  = {} ;
@@ -47,7 +46,7 @@ var GameEngine = {};
       
       gameData.setup.apply(g);
       
-      this.moveTo("entry");
+      g.moveTo("entry");
     }
     
     function makeItemsOnFrame(frameName) {

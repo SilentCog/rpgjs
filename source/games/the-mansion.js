@@ -1,10 +1,6 @@
 var theMansion = {
   version        : "0.2",
   intro          : "Oh look!  A house!  Let's go in it!",
-  setup          : function()
-  {
-    alert("test");
-  },
   frames         : {
     "entry" : {
       intro        : "You're in the entry way to the building.  To the north is a hallway.",
