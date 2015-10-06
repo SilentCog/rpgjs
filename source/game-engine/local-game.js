@@ -44,7 +44,8 @@ var GameEngine = {};
       basicActions.go   = basicActions.move   ;
       basicActions.take = basicActions.pickup ;
       
-      gameData.setup.apply(g);
+      if(typeof gameData.setup == "function")
+        gameData.setup.apply(g);
       
       g.moveTo("entry");
     }
