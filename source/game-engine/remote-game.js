@@ -7,11 +7,20 @@ var GameEngine = {};
   var div = "--------------------------------------------";
   var linkedCallbacks = [];
   
+  GameEngine.NewGame = function(gameName, textCallback) {
+    linkedCallbacks.push(textCallback);
+    
+    socket.emit("createGame", { gameName : gameName });
+    
+    return function(command) {
+      socket.emit("gameCommand", { command : command });
+    };
+  };
+  
   GameEngine.LinkToGame = function(textCallback) {
     linkedCallbacks.push(textCallback);
     
-    return function(command)
-    {
+    return function(command) {
       socket.emit("gameCommand", { command : command });
     };
   };
@@ -21,8 +30,7 @@ var GameEngine = {};
       console.log(text);
     });
     
-    return function(command)
-    {
+    return function(command) {
       socket.emit("gameCommand", { command : command });
       return div;
     };
