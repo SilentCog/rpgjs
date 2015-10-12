@@ -36,28 +36,25 @@ io.on('connection', function (socket)
   
   socket.on('createGame', function(data)
   {
-    if(!ioSess.game)
+    var gameName = data.gameName;
+    var gameData;
+    
+    console.log("creating new game \"" + gameName + "\" for user");
+    
+    try
     {
-      var gameName = data.gameName;
-      var gameData;
-      
-      console.log("creating new game \"" + gameName + "\" for user");
-      
-      try
-      {
-        gameData = require('./source/games/' + gameName);
-      }
-      catch(e)
-      {
-        console.error("Could not find game \"" + gameName + "\"");
-        return;
-      }
-      
-      ioSess.game = GameEngine.NewGame(gameName, gameData, function(text)
-      {
-        socket.emit('textCallback', { text : text });
-      });
+      gameData = require('./source/games/' + gameName);
     }
+    catch(e)
+    {
+      console.error("Could not find game \"" + gameName + "\"");
+      return;
+    }
+    
+    ioSess.game = GameEngine.NewGame(gameName, gameData, function(text)
+    {
+      socket.emit('textCallback', { text : text });
+    });
   });
 
   socket.on('gameCommand', function (data)

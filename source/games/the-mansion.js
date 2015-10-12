@@ -1,5 +1,5 @@
 var theMansion = {
-  version        : "0.2",
+  version        : "0.5",
   intro          : "Oh look!  A house!  Let's go in it!",
   frames         : {
     "entry" : {

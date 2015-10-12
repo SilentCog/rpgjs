@@ -8,13 +8,10 @@ var GameEngine = {};
   var linkedCallbacks = [];
   
   GameEngine.NewGame = function(gameName, textCallback) {
-    linkedCallbacks.push(textCallback);
-    
     socket.emit("createGame", { gameName : gameName });
     
-    return function(command) {
-      socket.emit("gameCommand", { command : command });
-    };
+    if(textCallback)
+      return GameEngine.LinkToGame(textCallback);
   };
   
   GameEngine.LinkToGame = function(textCallback) {

@@ -15,8 +15,8 @@ var GameEngine = {};
     };
   };
 
-  GameEngine.NewGame = function(name, options, textCallback) {
-    var game = new Game(name, options, textCallback);
+  GameEngine.NewGame = function(name, gameData, textCallback) {
+    var game = new Game(name, gameData, textCallback);
     
     return game.play;
   };
@@ -46,6 +46,16 @@ var GameEngine = {};
       
       if(typeof gameData.setup == "function")
         gameData.setup.apply(g);
+      
+      switch(typeof gameData.intro)
+      {
+        case "string":
+          g.print(gameData.intro);
+          break;
+        case "function":
+          g.print(gameData.intro.apply(g));
+          break;
+      }
       
       g.moveTo("entry");
     }
@@ -168,9 +178,15 @@ var GameEngine = {};
       if(currentFrame.onEnter)
         currentFrame.onEnter.apply(g);
       
-      var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
-      
-      g.print(intro);
+      switch(typeof currentFrame.intro)
+      {
+        case "string":
+          g.print(currentFrame.intro);
+          break;
+        case "function":
+          g.print(currentFrame.intro.apply(g));
+          break;
+      }
     };
     
     this.play = function(input) {
@@ -207,7 +223,8 @@ var GameEngine = {};
     
     this.print = function(text) {
       // we could set print directly to textCallback, but this provides a buffer preventing any tamporing with the actual textCallback function
-      textCallback(text);
+      if(typeof text === "string") // ehhhhh, maybe we should let users pass whatever?  Maybe not, I'm not really sure...
+        textCallback(text);
     };
     
     this.removeItemFromFrame = function(itemName) {

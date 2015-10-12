@@ -1,14 +1,14 @@
-var $ = require('jquery');
+var $ = require('jquery') ;
 
-var GameView = {};
-
-(function() {
+module.exports = function(LoadGame) {
   // catch any lines that come in before document.ready
-  var loaded           = false ;
-  var preLoadLines     = []    ;
-  var commandReceivers = []    ;
+  var loaded          = false ;
+  var preLoadLines    = []    ;
+  var commandReceiver         ;
   
-  var gameArea, gameInput;
+  var GameView = {};
+  
+  var gameArea, gameInput, gameSelect;
   
   GameView.appendText = function(text) {
     if(loaded)
@@ -20,18 +20,35 @@ var GameView = {};
       preLoadLines.push(text);
   };
   
-  GameView.addCommandReceiver = function(receiver) {
-    commandReceivers.push(receiver);
+  GameView.setCommandReceiver = function(receiver) {
+    commandReceiver = receiver;
+  };
+  
+  GameView.clearCommandReceiver = function(receiver) {
+    commandReceiver = null;
+  };
+  
+  GameView.clearInput = function() {
+    gameInput.val("");
+  };
+  
+  GameView.clearGameArea = function(clearInput) {
+    gameArea.text("");
+    
+    if(clearInput)
+      GameView.clearInput();
   };
   
   function sendCommandToReceivers(command) {
-    for(var i = 0; i < commandReceivers.length; i++)
-      commandReceivers[i](command);
+    if(commandReceiver)
+      commandReceiver(command);
   }
   
   $(function() {
-    gameArea  = $("#GameArea")  ;
-    gameInput = $("#GameInput") ;
+    gameArea   = $("#GameArea")                          ;
+    gameInput  = $("#GameInput")                         ;
+    gameSelect = $("#GameSelectBox input[type='radio']") ;
+    
     
     function init() {
       loaded = true;
@@ -52,8 +69,14 @@ var GameView = {};
       }
     });
     
+    gameSelect.change(function()
+    {
+      GameView.clearGameArea(true);
+      LoadGame($(this).val());
+    });
+    
     init();
   });
-})();
-
-module.exports = GameView;
+  
+  return GameView;
+};
