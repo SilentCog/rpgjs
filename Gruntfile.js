@@ -3,7 +3,10 @@ module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: {
-      build: ['public/js/console-game.js']
+      build: [
+        'public/js/local-game.js'  ,
+        'public/js/remote-game.js'
+      ]
     },
     jshint: {
       files: ['Gruntfile.js', 'source/**/*.js'],

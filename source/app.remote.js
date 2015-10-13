@@ -1,12 +1,5 @@
-
-
-//GameView.addCommandReceiver(GameEngine.NewGame("the-mansion", GameView.appendText));
-//window.g = GameEngine.LinkToGameInConsole();
-
-
-
 var GameView;
-var GameEngine = require('./game-engine/remote-game') ;
+var GameEngine = require('./game-engine/remote-game');
 
 var Game = {};
 

@@ -9,6 +9,7 @@ var GameEngine = {};
   
   GameEngine.NewGame = function(gameName, textCallback) {
     socket.emit("createGame", { gameName : gameName });
+    linkedCallbacks = [];
     
     if(textCallback)
       return GameEngine.LinkToGame(textCallback);
