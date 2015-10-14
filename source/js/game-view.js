@@ -1,5 +1,9 @@
 var $ = require('jquery') ;
 
+// TODO: not a huge fan of this method
+// of passing LoadGame, it doesn't
+// really match up with any other
+// workflow we use up to this point
 module.exports = function(LoadGame) {
   // catch any lines that come in before document.ready
   var loaded          = false ;
