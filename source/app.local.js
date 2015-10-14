@@ -13,9 +13,9 @@ var Game = {};
   var receiver;
   Game.LoadGame = function(gameName)
   {
-    window.g = GameEngine.NewConsoleGame(gameName, games[gameName]);
+    window.g = GameEngine.NewConsoleGame(games[gameName]);
     
-    receiver = GameEngine.NewGame(gameName, games[gameName], GameView.appendText);
+    receiver = GameEngine.NewGame(games[gameName], GameView.appendText);
     
     GameView.setCommandReceiver(receiver);
   };

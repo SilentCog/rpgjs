@@ -3,8 +3,8 @@ var GameEngine = {};
 (function() {
   var div = "--------------------------------------------";
   
-  GameEngine.NewConsoleGame = function(name, options) {
-    var game = new Game(name, options, function(text) {
+  GameEngine.NewConsoleGame = function(options) {
+    var game = new Game(options, function(text) {
       console.log(text);
     });
     
@@ -15,13 +15,13 @@ var GameEngine = {};
     };
   };
 
-  GameEngine.NewGame = function(name, gameData, textCallback) {
-    var game = new Game(name, gameData, textCallback);
+  GameEngine.NewGame = function(gameData, textCallback) {
+    var game = new Game(gameData, textCallback);
     
     return game.play;
   };
 
-  var Game = function(name, gameData, textCallback) {
+  var Game = function(gameData, textCallback) {
     var g = this;
     
     var gameActive = true;

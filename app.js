@@ -51,7 +51,7 @@ io.on('connection', function (socket)
       return;
     }
     
-    ioSess.game = GameEngine.NewGame(gameName, gameData, function(text)
+    ioSess.game = GameEngine.NewGame(gameData, function(text)
     {
       socket.emit('textCallback', { text : text });
     });
