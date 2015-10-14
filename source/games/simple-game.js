@@ -1,4 +1,5 @@
 var simpleGame = {
+  name           : "Simple Game",
   version        : "0.1",
   intro          : "You're in the forest",
   frames         : {
