@@ -1,5 +1,5 @@
-var io     = require('socket.io-client')    ;
-var socket = io.connect('http://localhost') ;
+var io     = require('socket.io-client')         ;
+var socket = io.connect('http://localhost:1337') ;
 
 var GameEngine = {};
 
