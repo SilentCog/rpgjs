@@ -334,13 +334,17 @@ var div = "--------------------------------------------";
         var commandMapping = {
           move: 'movement',
           inspect: 'inspect',
-          pickup: 'pickup',
+          pickup: 'items',
           use: 'use',
           inventory: 'inventory'
         };
 
         var options;
         var commands = Object.keys(this);
+
+        if (typeof currentFrame.frameActions !== 'undefined') {
+          commands.push(Object.keys(currentFrame.frameActions));
+        }
         
         var getOptions = function (key) {
           var keys;
