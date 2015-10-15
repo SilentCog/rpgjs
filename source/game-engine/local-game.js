@@ -23,7 +23,7 @@ GameEngine.NewGame = function (gameData, textCallback) {
   return game.play;
 };
 
-var Game = function (gameData, textCallback) {
+function Game(gameData, textCallback) {
   var g = this;
   
   var gameActive = true;
@@ -371,7 +371,7 @@ var Game = function (gameData, textCallback) {
   };
   
   init();
-};
+}
 
 
 if (typeof module !== 'undefined' && module.exports) {
