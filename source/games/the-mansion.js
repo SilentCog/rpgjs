@@ -47,31 +47,34 @@ var theMansion = {
         }
       },
       frameActions : {
-        "shut" : function(val) {
-          switch(val) {
-            case "door":
-              if(this.frameVars("doorOpen")) {
-                this.frameVars("doorOpen", false);
-                return "I've shut the door";
-              }
-              else
-                return "The door is already shut";
-              break;
-              
-            case "drawer":
-              if(this.frameVars("drawerOpen")) {
-                this.frameVars("drawerOpen", false);
-                return "I've shut the drawer";
-              }
-              else
-                return "The drawer is already shut";
-              break;  
-              
-            case "":
-              return "What did you want me to shut?";
-              
-            default:
-              return "I can't shut that.";
+        "shut" : {
+          aliases : [ "close" ],
+          action  : function(val) {
+            switch(val) {
+              case "door":
+                if(this.frameVars("doorOpen")) {
+                  this.frameVars("doorOpen", false);
+                  return "I've shut the door";
+                }
+                else
+                  return "The door is already shut";
+                break;
+                
+              case "drawer":
+                if(this.frameVars("drawerOpen")) {
+                  this.frameVars("drawerOpen", false);
+                  return "I've shut the drawer";
+                }
+                else
+                  return "The drawer is already shut";
+                break;  
+                
+              case "":
+                return "What did you want me to shut?";
+                
+              default:
+                return "I can't shut that.";
+            }
           }
         },
         "open" : function(val) {
