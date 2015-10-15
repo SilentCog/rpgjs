@@ -31,19 +31,26 @@ var GameEngine = {};
     
     var endGameMessage = "..." ;
     
-    var inventory  = {} ;
-    var gameVars   = {} ;
-    var frameVars  = {} ;
-    var frameItems = {} ;
+    var inventory    = {} ;
+    var gameVars     = {} ;
+    var frameVars    = {} ;
+    var frameItems   = {} ;
+    var frameActions = {} ;
     
     function init() {
       if(!gameData.frames.entry)
         throw "Game requires that exactly one frame be named \"entry\"";
-      
-      // Aliases
-      basicActions.go   = basicActions.move   ;
-      basicActions.take = basicActions.pickup ;
-      
+
+      // Expand basic actions
+      basicActions = getExpandedActionGroup(basicActions);
+
+      // Expand frame actions
+      for(var f in gameData.frames)
+      {
+        if(typeof gameData.frames[f].frameActions === "object")
+          frameActions[f] = getExpandedActionGroup(gameData.frames[f].frameActions);
+      }
+
       if(typeof gameData.setup == "function")
         gameData.setup.apply(g);
       
@@ -58,6 +65,33 @@ var GameEngine = {};
       }
       
       g.moveTo("entry");
+    }
+
+    function getExpandedActionGroup(actionGroup)
+    {
+      var newGroup = {};
+      for(var a in actionGroup)
+      {
+        var actionObj = actionGroup[a];
+
+        switch(typeof actionObj)
+        {
+          case "object":
+            newGroup[a] = actionObj.action;
+            for(var i = 0; i < actionObj.aliases.length; i++)
+            {
+              var alias = actionObj.aliases[i];
+              if(!actionGroup[alias] && !newGroup[alias]) // not everything has been added to newGroup yet, so we have to check both
+                newGroup[alias] = actionObj.action;
+            }
+            break;
+          case "function":
+            newGroup[a] = actionObj;
+            break;
+        }
+      }
+
+      return newGroup;
     }
     
     function makeItemsOnFrame(frameName) {
@@ -246,18 +280,21 @@ var GameEngine = {};
     };
     
     var basicActions = {
-      move   : function(input) {
-        if(!currentFrame.movement)
-          return "I can't move!";
-        
-        var func = currentFrame.movement[input];
-        
-        if(typeof func === "string")
-          return func;
-        else if(func)
-          return func.apply(g);
-        else
-          return "I can't move " + input;
+      move   : {
+          aliases : [ "go" ],
+          action  : function(input) {
+          if(!currentFrame.movement)
+            return "I can't move!";
+          
+          var func = currentFrame.movement[input];
+          
+          if(typeof func === "string")
+            return func;
+          else if(func)
+            return func.apply(g);
+          else
+            return "I can't move " + input;
+        }
       },// TODO: add the ability to inspect items
       inspect : function(input) {
         var func = currentFrame.inspect;
@@ -269,22 +306,25 @@ var GameEngine = {};
         else
           return "I already told you everything I know!";
       },
-      pickup : function(itemName) {
-        makeItemsOnFrame();
-        
-        var item = frameItems[cFrameName][itemName];
-        
-        if(!item || !g.itemAvailableInFrame(itemName))
-          return "I can't pick that up.";
-        
-        var ps = (item.pronounString ? item.pronounString : " a " + itemName);
-        
-        if(g.addItemToInventory(itemName, item)) {
-          g.removeItemFromFrame(itemName);
-          return "Picked up " + ps;
+      pickup : {
+        aliases : [ "take" ],
+        action  : function(itemName) {
+          makeItemsOnFrame();
+          
+          var item = frameItems[cFrameName][itemName];
+          
+          if(!item || !g.itemAvailableInFrame(itemName))
+            return "I can't pick that up.";
+          
+          var ps = (item.pronounString ? item.pronounString : " a " + itemName);
+          
+          if(g.addItemToInventory(itemName, item)) {
+            g.removeItemFromFrame(itemName);
+            return "Picked up " + ps;
+          }
+          else
+            return "I already have " + ps; // I already have that item
         }
-        else
-          return "I already have " + ps; // I already have that item
       },
       use : function(useStr) {
         var split = useStr.split(" on ");
