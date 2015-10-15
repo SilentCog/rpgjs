@@ -244,8 +244,8 @@ var GameEngine = {};
       
       var result;
       
-      if(currentFrame.frameActions && currentFrame.frameActions[com])
-        result = currentFrame.frameActions[com].apply(g, [arg]);
+      if(frameActions[cFrameName] && frameActions[cFrameName][com])
+        result = frameActions[cFrameName][com].apply(g, [arg]);
       else if(basicActions[com])
         result = basicActions[com](arg);
       else
