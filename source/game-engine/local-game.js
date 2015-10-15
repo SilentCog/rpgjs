@@ -221,7 +221,8 @@ var GameEngine = {};
     };
     
     this.print = function (text) {
-      // we could set print directly to textCallback, but this provides a buffer preventing any tamporing with the actual textCallback function
+      // we could set print directly to textCallback, but this provides a buffer
+      // preventing any tamporing with the actual textCallback function
       if (typeof text === "string") // ehhhhh, maybe we should let users pass whatever?  Maybe not, I'm not really sure...
         textCallback(text);
     };
@@ -257,7 +258,8 @@ var GameEngine = {};
           return func.apply(g);
         else
           return "I can't move " + input;
-      },// TODO: add the ability to inspect items
+      },
+      // TODO: add the ability to inspect items
       inspect : function (input) {
         var func = currentFrame.inspect;
         
@@ -320,10 +322,25 @@ var GameEngine = {};
         else
           return "I don't have anything.";
       },
-      help : function () {
+      help : function (command) {
         var commands = Object.keys(this);
+        var options;
 
-        return 'Available commands are: ' + commands.join(', ');
+        if (command) {
+          if (command === 'move') {
+            options = Object.keys(currentFrame.movement).join(', ');
+          } else {
+            options = Object.keys(currentFrame[command]).join(', ');
+          }
+
+          if (options !== '') {
+            return 'Options for ' + command + ' are: ' + options;
+          } else {
+            return command + ' currently has no options';
+          }
+        } else {
+          return 'Available commands are: ' + commands.join(', ');
+        }
       }
     };
     
