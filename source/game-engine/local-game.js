@@ -331,6 +331,14 @@ var div = "--------------------------------------------";
           return "I don't have anything.";
       },
       help : function (command) {
+        var commandMapping = {
+          move: 'movement',
+          inspect: 'inspect',
+          pickup: 'pickup',
+          use: 'use',
+          inventory: 'inventory'
+        };
+
         var options;
         var commands = Object.keys(this);
         
@@ -347,11 +355,7 @@ var div = "--------------------------------------------";
         };
 
         if (command) {
-          if (command === 'move') {
-            options = getOptions('movement');
-          } else {
-            options = getOptions(command);
-          }
+          options = getOptions(commandMapping[command]);
 
           if (options !== '') {
             return 'Options for ' + command + ' are: ' + options;
