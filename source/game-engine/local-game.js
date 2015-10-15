@@ -1,12 +1,16 @@
 var GameEngine = {};
+var div = "--------------------------------------------";
 
 (function () {
-  var div = "--------------------------------------------";
   
   GameEngine.NewConsoleGame = function (options) {
+    var helpText = "Use g() to play";
+
     var game = new Game(options, function (text) {
       console.log(text);
     });
+
+    console.log(helpText);
     
     return function (command) {
       game.play(command);
@@ -190,6 +194,10 @@ var GameEngine = {};
     };
     
     this.play = function (input) {
+      if (typeof input === 'undefined') {
+        input = 'help';
+      }
+
       if (!gameActive) {
         g.print(endGameMessage);
         return;
@@ -323,14 +331,26 @@ var GameEngine = {};
           return "I don't have anything.";
       },
       help : function (command) {
-        var commands = Object.keys(this);
         var options;
+        var commands = Object.keys(this);
+        
+        var getOptions = function (key) {
+          var keys;
+          var action = currentFrame[key];
+
+          if (typeof action !== 'undefined') {
+            keys = Object.keys(action);
+            return keys.join(', ');
+          } else {
+            return '';
+          }
+        };
 
         if (command) {
           if (command === 'move') {
-            options = Object.keys(currentFrame.movement).join(', ');
+            options = getOptions('movement');
           } else {
-            options = Object.keys(currentFrame[command]).join(', ');
+            options = getOptions(command);
           }
 
           if (options !== '') {
