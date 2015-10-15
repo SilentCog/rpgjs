@@ -1,6 +1,25 @@
-var GameView   = require('./js/game-view')           ;
-var GameEngine = require('./game-engine/local-game') ;
-var gameData   = require('./games/the-mansion')      ;
+var GameView;
 
-window.g = GameEngine.NewConsoleGame("The Mansion", gameData);
-GameView.addCommandReceiver(GameEngine.NewGame("The Mansion", gameData, GameView.appendText));
+var GameEngine = require('./game-engine/local-game') ;
+var games      = {
+  "the-mansion" : require('./games/the-mansion'),
+  "simple-game" : require('./games/simple-game')
+};
+
+var Game = {};
+
+(function()
+{
+  var receiver;
+  Game.LoadGame = function(gameName)
+  {
+    window.g = GameEngine.NewConsoleGame(games[gameName]);
+    
+    receiver = GameEngine.NewGame(games[gameName], GameView.appendText);
+    
+    GameView.setCommandReceiver(receiver);
+  };
+})();
+
+GameView = require('./js/game-view')(Game.LoadGame);
+Game.LoadGame("the-mansion");

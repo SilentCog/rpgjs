@@ -7,7 +7,6 @@ var session      = require('express-session')                 ;
 var server       = require('http').Server(express())          ;
 var io           = require('socket.io')(server)               ;
 var GameEngine   = require('./source/game-engine/local-game') ;
-var gameData     = require('./source/games/the-mansion')      ;
 
 var app = express();
 
@@ -36,14 +35,28 @@ io.on('connection', function (socket)
 {
   var ioSess = socket.request.session;
   
-  if(!ioSess.game)
+  socket.on('createGame', function(data)
   {
-    console.log("creating new game for user");
-    ioSess.game = GameEngine.NewGame("The Mansion", gameData, function(text)
+    var gameName = data.gameName;
+    var gameData;
+    
+    console.log("creating new game \"" + gameName + "\" for user");
+    
+    try
+    {
+      gameData = require('./source/games/' + gameName);
+    }
+    catch(e)
+    {
+      console.error("Could not find game \"" + gameName + "\"");
+      return;
+    }
+    
+    ioSess.game = GameEngine.NewGame(gameData, function(text)
     {
       socket.emit('textCallback', { text : text });
     });
-  }
+  });
 
   socket.on('gameCommand', function (data)
   {

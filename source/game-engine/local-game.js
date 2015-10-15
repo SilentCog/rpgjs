@@ -3,8 +3,8 @@ var GameEngine = {};
 (function() {
   var div = "--------------------------------------------";
   
-  GameEngine.NewConsoleGame = function(name, options) {
-    var game = new Game(name, options, function(text) {
+  GameEngine.NewConsoleGame = function(options) {
+    var game = new Game(options, function(text) {
       console.log(text);
     });
     
@@ -15,13 +15,13 @@ var GameEngine = {};
     };
   };
 
-  GameEngine.NewGame = function(name, options, textCallback) {
-    var game = new Game(name, options, textCallback);
+  GameEngine.NewGame = function(gameData, textCallback) {
+    var game = new Game(gameData, textCallback);
     
     return game.play;
   };
 
-  var Game = function(name, gameData, textCallback) {
+  var Game = function(gameData, textCallback) {
     var g = this;
     
     var gameActive = true;
@@ -29,16 +29,36 @@ var GameEngine = {};
     var currentFrame = null ;
     var cFrameName   = ""   ;
     
-    
     var endGameMessage = "..." ;
-    
-    if(!gameData.frames.entry)
-      throw "Game requires that exactly one frame be named \"entry\"";
     
     var inventory  = {} ;
     var gameVars   = {} ;
     var frameVars  = {} ;
     var frameItems = {} ;
+    
+    function init() {
+      if(!gameData.frames.entry)
+        throw "Game requires that exactly one frame be named \"entry\"";
+      
+      // Aliases
+      basicActions.go   = basicActions.move   ;
+      basicActions.take = basicActions.pickup ;
+      
+      if(typeof gameData.setup == "function")
+        gameData.setup.apply(g);
+      
+      switch(typeof gameData.intro)
+      {
+        case "string":
+          g.print(gameData.intro);
+          break;
+        case "function":
+          g.print(gameData.intro.apply(g));
+          break;
+      }
+      
+      g.moveTo("entry");
+    }
     
     function makeItemsOnFrame(frameName) {
       if(!frameName)
@@ -84,13 +104,17 @@ var GameEngine = {};
     };
     
     this.frameVars = function(key, value) {
-      if(!frameVars[cFrameName])
-        frameVars[cFrameName] = {};
+      return g.frameVarsOnFrame(cFrameName, key, value);
+    };
+    
+    this.frameVarsOnFrame = function(frameName, key, value) {
+      if(!frameVars[frameName])
+        frameVars[frameName] = {};
       
       if(typeof value !== "undefined")
-        frameVars[cFrameName][key] = value;
+        frameVars[frameName][key] = value;
       
-      return frameVars[cFrameName][key];
+      return frameVars[frameName][key];
     };
     
     this.gameVars = function(key, value) {
@@ -154,9 +178,15 @@ var GameEngine = {};
       if(currentFrame.onEnter)
         currentFrame.onEnter.apply(g);
       
-      var intro = (typeof currentFrame.intro === "string" ? currentFrame.intro : currentFrame.intro());
-      
-      g.print(intro);
+      switch(typeof currentFrame.intro)
+      {
+        case "string":
+          g.print(currentFrame.intro);
+          break;
+        case "function":
+          g.print(currentFrame.intro.apply(g));
+          break;
+      }
     };
     
     this.play = function(input) {
@@ -193,7 +223,8 @@ var GameEngine = {};
     
     this.print = function(text) {
       // we could set print directly to textCallback, but this provides a buffer preventing any tamporing with the actual textCallback function
-      textCallback(text);
+      if(typeof text === "string") // ehhhhh, maybe we should let users pass whatever?  Maybe not, I'm not really sure...
+        textCallback(text);
     };
     
     this.removeItemFromFrame = function(itemName) {
@@ -292,11 +323,7 @@ var GameEngine = {};
       }
     };
     
-    // Aliases
-    basicActions.go   = basicActions.move   ;
-    basicActions.take = basicActions.pickup ;
-    
-    return this.moveTo("entry");
+    init();
   };
 })();
 

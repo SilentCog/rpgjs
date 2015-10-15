@@ -1,4 +1,18 @@
-var GameView   = require('./js/game-view')            ;
-var GameEngine = require('./game-engine/remote-game') ;
+var GameView;
+var GameEngine = require('./game-engine/remote-game');
 
-GameView.addCommandReceiver(GameEngine.LinkToGame(GameView.appendText));
+var Game = {};
+
+(function()
+{
+  var receiver;
+  Game.LoadGame = function(gameName)
+  {
+    receiver = GameEngine.NewGame(gameName, GameView.appendText);
+    
+    GameView.setCommandReceiver(receiver);
+  };
+})();
+
+GameView = require('./js/game-view')(Game.LoadGame);
+Game.LoadGame("the-mansion");
