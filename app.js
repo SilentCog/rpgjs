@@ -10,8 +10,9 @@ var GameEngine   = require('./source/game-engine/local-game') ;
 
 var app = express();
 
-// Jade, we're not really using it, but it keeps Node quiet
-app.set('view engine', 'jade');
+require('node-jsx').install();
+app.set('view engine', 'js');
+app.engine('js', require('express-react-views').createEngine());
 
 // set up sessions
 // TODO: bring back redis! We need better session storing to avoid memory leaks! 
