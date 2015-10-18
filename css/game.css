@@ -1,0 +1,111 @@
+body
+{
+  background-color:           #7C4CCF;
+  color:                      #FCD01E;
+  font-size:                  20px;
+  font-family:                VT323, Terminal, "Courier New", Courier, monospace;
+}
+
+h1
+{
+  font-weigh:                 normal;
+  text-align:                 center;
+}
+
+a
+{
+  background-color:           #FCD01E;
+  color:                      #7C4CCF;
+  text-decoration:            none;
+  padding:                    0.075em 0.3em 0.1em 0.3em;
+  border-radius:              0.1em;
+}
+
+a:hover
+{
+  color:                      #A783E6;
+}
+
+#GameArea,
+#GameInput
+{
+  color:                      white;
+  font-size:                  1em;
+  border:                     2px solid #FCD01E;
+  display:                    block;
+  padding:                    1em;
+  width:                      30em;
+  margin:                     0 auto;
+  color:                      white;
+}
+
+#GameArea
+{
+  border-bottom-style:        none;
+  height:                     20em;
+  border-radius:              1em 1em 0 0;
+  background-color:           #8C60D6;
+  overflow:                   hidden;
+}
+
+#GameInput
+{
+  font:                       inherit;
+  top:                        22em;
+  border-radius:              0 0 1em 1em;
+  background-color:           #A783E6;
+  outline:                    none;
+}
+
+.hint
+{
+  font-size:                  1em;
+  width:                      30em;
+  margin:                     1em auto;
+  text-align:                 center;
+}
+
+.lineIndicator
+{
+  color:                      #FCD01E;
+  float:                      left;
+}
+
+.gameText
+{
+  display:                    block;
+  margin-left:                1em;
+}
+
+.radioBox input
+{
+  display:                    none;
+}
+
+.radioBox label
+{
+  display:                    inline-block;
+  cursor:                     pointer;
+  font-weight:                bold;
+  padding:                    0.5em 1em;
+  margin:                     0;
+  border:                     1px #FCD01E;
+  border-style:               solid none solid solid;
+}
+
+.radioBox label:first-of-type
+{
+  border-radius:              0.5em 0 0 0.5em;
+}
+
+.radioBox label:last-of-type
+{
+  border-radius:              0 0.5em 0.5em 0;
+  border-right-style:         solid;
+}
+
+.radioBox input:checked+label
+{
+  background-color:           #FCD01E;
+  color:                      #7C4CCF;
+}
