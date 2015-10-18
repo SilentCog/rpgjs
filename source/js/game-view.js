@@ -1,59 +1,77 @@
 var $ = require('jquery');
+var escapeHtml = require('escape-html');
 
-var GameView = {};
+var loaded = false;
+var preLoadLines = [];
+var gameArea, gameInput, gameSelect;
 
-(function() {
-  // catch any lines that come in before document.ready
-  var loaded           = false ;
-  var preLoadLines     = []    ;
-  var commandReceivers = []    ;
-  
-  var gameArea, gameInput;
-  
-  GameView.appendText = function(text) {
-    if(loaded)
-    {
+var GameView = {
+  commandReceiver: null,
+  appendText: function (text) {
+    if (loaded) {
       gameArea.append("<div><span class='lineIndicator'>&gt;</span><span class='gameText'>" + text + "</span></div>");
       gameArea.animate({ scrollTop : gameArea[0].scrollHeight - gameArea.height() });
     }
     else
       preLoadLines.push(text);
-  };
-  
-  GameView.addCommandReceiver = function(receiver) {
-    commandReceivers.push(receiver);
-  };
-  
-  function sendCommandToReceivers(command) {
-    for(var i = 0; i < commandReceivers.length; i++)
-      commandReceivers[i](command);
-  };
-  
-  $(function() {
-    gameArea  = $("#GameArea")  ;
-    gameInput = $("#GameInput") ;
-    
-    function init() {
-      loaded = true;
-      
-      for(var i = 0; i < preLoadLines.length; i++)
-        GameView.appendText(preLoadLines[i]);
-    }
-    
-    
-    $(document).keypress(function(e) {
-      var text = gameInput.val();
-      if(e.which == 13 && text) {
-        GameView.appendText(text);
-        
-        sendCommandToReceivers(text);
-        
-        gameInput.val("");
-      }
-    });
-    
-    init();
-  });
-})();
+  },
+  sendCommandToReceivers: function (command) {
+    if (this.commandReceiver)
+      this.commandReceiver(command);
+  },
+  setCommandReceiver: function (receiver) {
+    this.commandReceiver = receiver;
+  },
+  clearCommandReceiver: function (receiver) {
+    this.commandReceiver = null;
+  },
+  clearInput: function() {
+    gameInput.val("");
+  },
+  clearGameArea: function (clearInput) {
+    gameArea.text("");
 
-module.exports = GameView;
+    if(clearInput)
+      this.clearInput();
+  },
+  setDomElements: function (ga, gi, gs) {
+    // this.gameArea   = document.getElementById("GameArea");
+    // this.gameInput  = document.getElementById("GameInput");
+    gameArea   = $("#GameArea");
+    gameInput  = $("#GameInput");
+    gameSelect = $("#GameSelectBox input[type='radio']");
+  },
+  initialize: function (LoadGame) {
+
+    this.setDomElements();
+
+    loaded = true;
+
+    for(var i = 0; i < preLoadLines.length; i++)
+      this.appendText(preLoadLines[i]);
+
+    window.onkeyup = function (e) {
+      var text = escapeHtml(gameInput.val());
+      if(e.which == 13 && text) {
+        this.appendText(text);
+        this.sendCommandToReceivers(text);
+        this.clearInput();
+      }
+    }.bind(this);
+
+    gameSelect.change(function () {
+      this.clearGameArea(true);
+      LoadGame($(this).val());
+    });
+
+    return this;
+  }
+};
+
+// TODO: not a huge fan of this method
+// of passing LoadGame, it doesn't
+// really match up with any other
+// workflow we use up to this point
+module.exports = function(LoadGame) {
+  return GameView.initialize(LoadGame);
+};

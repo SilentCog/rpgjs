@@ -76,3 +76,36 @@ a:hover
   display:                    block;
   margin-left:                1em;
 }
+
+.radioBox input
+{
+  display:                    none;
+}
+
+.radioBox label
+{
+  display:                    inline-block;
+  cursor:                     pointer;
+  font-weight:                bold;
+  padding:                    0.5em 1em;
+  margin:                     0;
+  border:                     1px #FCD01E;
+  border-style:               solid none solid solid;
+}
+
+.radioBox label:first-of-type
+{
+  border-radius:              0.5em 0 0 0.5em;
+}
+
+.radioBox label:last-of-type
+{
+  border-radius:              0 0.5em 0.5em 0;
+  border-right-style:         solid;
+}
+
+.radioBox input:checked+label
+{
+  background-color:           #FCD01E;
+  color:                      #7C4CCF;
+}

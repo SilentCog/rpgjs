@@ -1,5 +1,5 @@
 node_modules/
 
-public/js/console-game.js
-public/js/Testing-Grounds.js
+public/js/local-game.js
+public/js/remote-game.js
 npm-debug.log
