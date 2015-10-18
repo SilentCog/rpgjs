@@ -36,6 +36,7 @@ var GameEngine = {};
     var frameVars    = {} ;
     var frameItems   = {} ;
     var frameActions = {} ;
+    var gameActions  = {} ;
     
     function init() {
       if(!gameData.frames.entry)
@@ -43,6 +44,9 @@ var GameEngine = {};
 
       // Expand basic actions
       basicActions = getExpandedActionGroup(basicActions);
+
+      // Expand game actions
+      gameActions = getExpandedActionGroup(gameData.gameActions);
 
       // Expand frame actions
       for(var f in gameData.frames)
@@ -247,6 +251,8 @@ var GameEngine = {};
       
       if(frameActions[cFrameName] && frameActions[cFrameName][com])
         result = frameActions[cFrameName][com].action.apply(g, [arg]);
+      else if(gameActions[com])
+        result = gameActions[com].action.apply(g, [arg]);
       else if(basicActions[com])
         result = basicActions[com].action(arg);
       else

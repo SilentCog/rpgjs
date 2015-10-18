@@ -2,6 +2,74 @@ var theMansion = {
   name           : "The Mansion",
   version        : "0.5",
   intro          : "Oh look!  A house!  Let's go in it!",
+  setup          : function()
+  {
+    var frames = theMansion.frames;
+    for(var f in frames)
+    {
+      var frame = frames[f];
+      if(frame.openables)
+      {
+        for(var o in frame.openables)
+        {
+          var openable = frame.openables[o];
+          switch(typeof openable)
+          {
+            case "string":
+              this.gameVar("IsOpen_" + f + "_" + openable, false);
+              break;
+            case "object":
+              this.gameVar("IsOpen_" + f + "_" + openable.name, openable.initValue);
+              break;
+          }
+        }
+      }
+    }
+  }
+  gameActions    : {
+    open : function(com) {
+      if(!com)
+        return "What do you want me to open?";
+
+      var frameName = this.getCurrentFrameName() ;
+      var frame     = this.getCurrentFrame()     ;
+      var openables = frame.openables            ;
+
+      if(!openables || !openables[com])
+        return "I can't open " + com;
+
+      var openable = openables[com];
+
+      if(!this.gameVar("IsOpen_" + frameName + "_" + com))
+      {
+        if(openables.onChanged)
+          return openables.changed.apply(this);
+
+        if(openable.onTryOpen)
+          return openables.onOpen.apply(this);
+
+        if(openable.canOpen && !openable.canOpen.apply(this))
+          return;
+
+        this.gameVar("IsOpen_" + frameName + "_" + com, true);
+
+        if(openable.onOpened)
+          return openables.onOpen.apply(this);
+      }
+      else
+      {
+        switch(typeof openable.alreadyOpen)
+        {
+          case "string":
+            return openable.alreadyOpen;
+          case "function":
+            return openable.alreadyOpen.apply(this);
+          default:
+            return com + " is already open!";
+        }
+      }
+    }
+  },
   frames         : {
     "entry" : {
       intro        : "You're in the entry way to the building.  To the north is a hallway.",

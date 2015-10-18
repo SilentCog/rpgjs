@@ -2,6 +2,12 @@ var simpleGame = {
   name           : "Simple Game",
   version        : "0.1",
   intro          : "You're in the forest",
+  gameActions    : {
+    "shout" : function(com)
+    {
+      this.print("You shout \"" + com + "\"");
+    }
+  },
   frames         : {
     "entry" : {
       intro        : "Which way would you like to go?",
