@@ -1,5 +1,3 @@
-// escape any user entered strings
-
 module.exports = {
   DIVIDER: "--------------------------------------------",
   CONTENT: {

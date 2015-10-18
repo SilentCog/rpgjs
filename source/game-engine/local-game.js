@@ -1,5 +1,3 @@
-// TODO: add string escaping for all commands entered into field
-
 var STRINGS = require('../statics/strings');
 
 var GameEngine = {};
