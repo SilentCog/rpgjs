@@ -1,7 +1,7 @@
 {
   "name": "console-game",
   "description": "Easter egg console.log game in the text based RPG fashion.",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "author": {
     "name": "Mimi Flynn",
     "email": "mimiflynn@gmail.com"
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mimiflynn/console-game.git"
+    "url": "git@github.com:SilentCog/console-game.git"
   },
   "devDependencies": {
     "browserify": "^11.0.1",
@@ -28,6 +28,7 @@
     "body-parser": "^1.14.1",
     "cookie-parser": "^1.4.0",
     "debug": "^2.2.0",
+    "escape-html": "^1.0.3",
     "express": "^4.13.3",
     "express-react-views": "^0.9.0",
     "express-session": "^1.11.3",
