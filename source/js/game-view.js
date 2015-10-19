@@ -39,7 +39,7 @@ var GameView = {
     // this.gameInput  = document.getElementById("GameInput");
     gameArea   = $("#GameArea");
     gameInput  = $("#GameInput");
-    gameSelect = $("#GameSelectBox input[type='radio']");
+//    gameSelect = $("#GameSelectBox input[type='radio']");
   },
   initialize: function (LoadGame) {
 
@@ -59,10 +59,10 @@ var GameView = {
       }
     }.bind(this);
 
-    gameSelect.change(function () {
+/*    gameSelect.change(function () {
       this.clearGameArea(true);
       LoadGame($(this).val());
-    });
+    });*/
 
     return this;
   }

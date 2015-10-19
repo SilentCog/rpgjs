@@ -1,6 +1,10 @@
-var GameView;
-var GameEngine = require('./game-engine/local-game');
+var React = require('react');
+var ReactDom = require('react-dom');
 
+var GameEngine = require('./game-engine/local-game');
+var GameSelector = require('../views/components/selector');
+
+var GameView;
 var Game = {};
 var receiver;
 
@@ -18,4 +22,9 @@ Game.LoadGame = function (gameName) {
 document.addEventListener("DOMContentLoaded", function (e) {
   GameView = require('./js/game-view')(Game.LoadGame);
   Game.LoadGame("the-mansion");
+
+  ReactDom.render(
+    <GameSelector/>,
+    document.getElementById('selector')
+  );
 });
