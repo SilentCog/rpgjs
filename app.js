@@ -70,7 +70,7 @@ io.on('connection', function (socket)
 });
 
 app.get('/', function (req, res) {
-  res.render('local-game', {
+  res.render('pages/local-game', {
     title: 'Console-Game RPG Framework',
     scripts: ['/js/local-game.js']
   });
