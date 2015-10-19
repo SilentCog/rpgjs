@@ -70,18 +70,24 @@ io.on('connection', function (socket)
 });
 
 app.get('/', function (req, res) {
-  res.render('pages/local-game', {
+  res.render('pages/index', {
     title: 'Console-Game RPG Framework',
-    scripts: ['/js/local-game.js']
+    scripts: ['/js/local-game.js'],
+    local: true
   });
 });
 
+// Preview html for github page
 app.get('/local-game', function (req, res) {
   res.sendFile(path.join(__dirname, "public/local-game.html"));
 });
 
 app.get('/remote-game', function(req, res) {
-  res.sendFile(path.join(__dirname, "public/remote-game.html"));
+  res.render('pages/index', {
+    title: 'Console-Game RPG Framework',
+    scripts: ['/js/remote-game.js'],
+    local: false
+  });
 });
 
 // uncomment after placing your favicon in /public
@@ -95,8 +101,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/', routes);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next)
-{
+app.use(function (req, res, next) {
 	var err = new Error('Not Found');
 	err.status = 404;
 	next(err);
@@ -107,8 +112,7 @@ app.use(function(req, res, next)
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-	app.use(function(err, req, res, next)
-	{
+	app.use(function (err, req, res, next) {
 		res.status(err.status || 500);
 
 		res.render('error', {
@@ -123,7 +127,7 @@ if (app.get('env') === 'development') {
 app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 
-	res.render('error', {
+	res.render('pages/error', {
 		message : err.message,
 		error   : {}
 	});
