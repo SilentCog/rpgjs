@@ -77,16 +77,17 @@ var GameEngine = {};
         switch(typeof actionObj)
         {
           case "object":
-            newGroup[a] = actionObj.action;
+            newGroup[a] = actionObj;
+
             for(var i = 0; i < actionObj.aliases.length; i++)
             {
               var alias = actionObj.aliases[i];
               if(!actionGroup[alias] && !newGroup[alias]) // not everything has been added to newGroup yet, so we have to check both
-                newGroup[alias] = actionObj.action;
+                newGroup[alias] = actionObj;
             }
             break;
           case "function":
-            newGroup[a] = actionObj;
+            newGroup[a] = { action : actionObj };
             break;
         }
       }
@@ -245,9 +246,9 @@ var GameEngine = {};
       var result;
       
       if(frameActions[cFrameName] && frameActions[cFrameName][com])
-        result = frameActions[cFrameName][com].apply(g, [arg]);
+        result = frameActions[cFrameName][com].action.apply(g, [arg]);
       else if(basicActions[com])
-        result = basicActions[com](arg);
+        result = basicActions[com].action(arg);
       else
         result = "I don't understand \"" + com + "\"";
       
