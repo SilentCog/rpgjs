@@ -8,14 +8,18 @@ var server       = require('http').Server(express())          ;
 var io           = require('socket.io')(server)               ;
 var GameEngine   = require('./source/game-engine/local-game') ;
 
+var CONFIG = require('./source/statics/config');
+
 var app = express();
 
+// Views setup
 require('node-jsx').install();
+app.set('views', CONFIG.ROOT + 'views');
 app.set('view engine', 'js');
 app.engine('js', require('express-react-views').createEngine());
 
 // set up sessions
-// TODO: bring back redis! We need better session storing to avoid memory leaks! 
+// TODO: bring back redis! We need better session storing to avoid memory leaks!
 //var redis = require('redis');
 //var client = redis.createClient(6379, 'localhost');
 var sessionMiddleware = session({
@@ -35,14 +39,14 @@ server.listen(1337);
 io.on('connection', function (socket)
 {
   var ioSess = socket.request.session;
-  
+
   socket.on('createGame', function(data)
   {
     var gameName = data.gameName;
     var gameData;
-    
+
     console.log("creating new game \"" + gameName + "\" for user");
-    
+
     try
     {
       gameData = require('./source/games/' + gameName);
@@ -52,7 +56,7 @@ io.on('connection', function (socket)
       console.error("Could not find game \"" + gameName + "\"");
       return;
     }
-    
+
     ioSess.game = GameEngine.NewGame(gameData, function(text)
     {
       socket.emit('textCallback', { text : text });
@@ -65,18 +69,18 @@ io.on('connection', function (socket)
   });
 });
 
-app.get('/', function(req, res)
-{
-  res.redirect("/local-game");
+app.get('/', function (req, res) {
+  res.render('local-game', {
+    title: 'Console-Game RPG Framework',
+    scripts: ['/js/local-game.js']
+  });
 });
 
-app.get('/local-game', function(req, res)
-{
+app.get('/local-game', function (req, res) {
   res.sendFile(path.join(__dirname, "public/local-game.html"));
 });
 
-app.get('/remote-game', function(req, res)
-{
+app.get('/remote-game', function(req, res) {
   res.sendFile(path.join(__dirname, "public/remote-game.html"));
 });
 
@@ -102,12 +106,11 @@ app.use(function(req, res, next)
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development')
-{
+if (app.get('env') === 'development') {
 	app.use(function(err, req, res, next)
 	{
 		res.status(err.status || 500);
-		
+
 		res.render('error', {
 			message : err.message,
 			error   : err
@@ -117,10 +120,9 @@ if (app.get('env') === 'development')
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next)
-{
+app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
-	
+
 	res.render('error', {
 		message : err.message,
 		error   : {}
