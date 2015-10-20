@@ -36,8 +36,7 @@ app.use(sessionMiddleware);
 
 server.listen(1337);
 
-io.on('connection', function (socket)
-{
+io.on('connection', function (socket) {
   var ioSess = socket.request.session;
 
   socket.on('createGame', function(data)
@@ -63,8 +62,7 @@ io.on('connection', function (socket)
     });
   });
 
-  socket.on('gameCommand', function (data)
-  {
+  socket.on('gameCommand', function (data) {
     ioSess.game(data.command);
   });
 });
@@ -132,6 +130,5 @@ app.use(function (err, req, res, next) {
 		error   : {}
 	});
 });
-
 
 module.exports = app;

@@ -1,3 +1,7 @@
+/*
+ * jQuery view controller
+ */
+
 var $ = require('jquery');
 var escapeHtml = require('escape-html');
 
@@ -35,8 +39,6 @@ var GameView = {
       this.clearInput();
   },
   setDomElements: function (ga, gi, gs) {
-    // this.gameArea   = document.getElementById("GameArea");
-    // this.gameInput  = document.getElementById("GameInput");
     gameArea   = $("#GameArea");
     gameInput  = $("#GameInput");
     this.clearGameArea();
@@ -44,6 +46,14 @@ var GameView = {
   displayPreloadLines: function () {
     for(var i = 0; i < preLoadLines.length; i++) {
       this.appendText(preLoadLines[i]);
+    }
+  },
+  handleKeyUp: function (e) {
+    var text = escapeHtml(e.target.value);
+    if(e.which == 13 && text) {
+      this.appendText(text);
+      this.sendCommandToReceivers(text);
+      this.clearInput();
     }
   },
   reinitialize: function () {
@@ -58,14 +68,7 @@ var GameView = {
     this.setDomElements();
     this.displayPreloadLines();
 
-    window.onkeyup = function (e) {
-      var text = escapeHtml(gameInput.val());
-      if(e.which == 13 && text) {
-        this.appendText(text);
-        this.sendCommandToReceivers(text);
-        this.clearInput();
-      }
-    }.bind(this);
+    window.onkeyup = this.handleKeyUp.bind(this);
 
     return this;
   }
