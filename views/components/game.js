@@ -1,4 +1,5 @@
 var React = require('react');
+var ReactDom = require('react-dom');
 
 var GameEngine = require('../../source/game-engine/local-game');
 
@@ -17,6 +18,7 @@ module.exports = React.createClass({
   },
   componentDidMount: function () {
     this.initializeGame();
+    ReactDom.findDOMNode(this.refs.gameInput).focus();
   },
   initializeGame: function () {
     this.game = GameEngine.NewGame(this.props.game, this.updateText);
