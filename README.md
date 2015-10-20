@@ -218,7 +218,14 @@ Open your browser to `http://localhost:1337`
 
 ## Isomorphic React Goodness
 
-Isomorphic React components live in the `/views` directory.
+Isomorphic React components live in the `/views` directory. Directory structure as follows:
+
+```
+/views
+    /components - individual components for use on the client side and server side
+    /layouts - html page wrappers for server side rendering
+    /pages - Full pages called by express routes for server side rendering
+```
 
 ## License and Editing the API
 
