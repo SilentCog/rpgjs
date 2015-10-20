@@ -5,12 +5,14 @@ var Default = require('../layouts/default');
 module.exports = React.createClass({
   propTypes: {
     title: React.PropTypes.string,
-    error: React.PropTypes.object
+    error: React.PropTypes.object,
+    message: React.PropTypes.string
   },
   render: function () {
     return (
       <Default title={this.props.title}>
-        { this.props.error.stack }
+        <h1>{this.props.error} Error</h1>
+        <p>{ this.props.message }</p>
       </Default>
     );
   }
