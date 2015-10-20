@@ -39,16 +39,24 @@ var GameView = {
     // this.gameInput  = document.getElementById("GameInput");
     gameArea   = $("#GameArea");
     gameInput  = $("#GameInput");
-//    gameSelect = $("#GameSelectBox input[type='radio']");
+    this.clearGameArea();
   },
-  initialize: function (LoadGame) {
+  displayPreloadLines: function () {
+    for(var i = 0; i < preLoadLines.length; i++) {
+      this.appendText(preLoadLines[i]);
+    }
+  },
+  reinitialize: function () {
+    this.clearGameArea();
+    this.displayPreloadLines();
 
-    this.setDomElements();
-
+    return this;
+  },
+  initialize: function () {
     loaded = true;
 
-    for(var i = 0; i < preLoadLines.length; i++)
-      this.appendText(preLoadLines[i]);
+    this.setDomElements();
+    this.displayPreloadLines();
 
     window.onkeyup = function (e) {
       var text = escapeHtml(gameInput.val());
@@ -59,19 +67,8 @@ var GameView = {
       }
     }.bind(this);
 
-/*    gameSelect.change(function () {
-      this.clearGameArea(true);
-      LoadGame($(this).val());
-    });*/
-
     return this;
   }
 };
 
-// TODO: not a huge fan of this method
-// of passing LoadGame, it doesn't
-// really match up with any other
-// workflow we use up to this point
-module.exports = function(LoadGame) {
-  return GameView.initialize(LoadGame);
-};
+module.exports = GameView;

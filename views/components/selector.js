@@ -1,8 +1,11 @@
 var React = require('react');
 
 module.exports = React.createClass({
+  propTypes: {
+    changeGame: React.PropTypes.func
+  },
   handleClick: function (e) {
-    console.log('click');
+    this.props.changeGame(e.target.value);
   },
   render: function () {
     return (
