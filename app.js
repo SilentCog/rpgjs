@@ -79,7 +79,7 @@ app.get('/', function (req, res) {
 
 // Preview html for github page
 app.get('/local-game', function (req, res) {
-  res.sendFile(path.join(__dirname, "public/local-game.html"));
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 app.get('/remote-game', function(req, res) {

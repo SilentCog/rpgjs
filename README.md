@@ -50,10 +50,10 @@ Any time a function is used for a property in the options object, several game f
 
 ```javascript
 movement : {
-	"east" : function()
-	{
-		this.moveTo("frameName");
-	}
+  "east" : function()
+  {
+    this.moveTo("frameName");
+  }
 }
 ```
 
@@ -85,46 +85,46 @@ In addition to basic actions, every frame has the ability to add actions that ap
 
 ```javascript
 frameActions : {
-	"open" : function(val)
-	{
-		switch(val)
-		{
-			case "door":
-				if(!this.frameVars("doorOpen"))
-				{
-					this.frameVars("doorOpen", true);
-					return "I've opened the door";
-				}
-				else
-					return "The door is already open";
-				
-			case "":
-				return "What did you want me to open?";
-				
-			default:
-				return "I can't open that.";
-		}
-	},
-	"close" : function(val)
-	{
-		switch(val)
-		{
-			case "door":
-				if(this.frameVars("doorOpen"))
-				{
-					this.frameVars("doorOpen", false);
-					return "I've shut the door";
-				}
-				else
-					return "The door is already shut";
-				
-			case "":
-				return "What did you want me to shut?";
-				
-			default:
-				return "I can't shut that.";
-		}
-	}
+  "open" : function(val)
+  {
+    switch(val)
+    {
+      case "door":
+        if(!this.frameVars("doorOpen"))
+        {
+          this.frameVars("doorOpen", true);
+          return "I've opened the door";
+        }
+        else
+          return "The door is already open";
+        
+      case "":
+        return "What did you want me to open?";
+        
+      default:
+        return "I can't open that.";
+    }
+  },
+  "close" : function(val)
+  {
+    switch(val)
+    {
+      case "door":
+        if(this.frameVars("doorOpen"))
+        {
+          this.frameVars("doorOpen", false);
+          return "I've shut the door";
+        }
+        else
+          return "The door is already shut";
+        
+      case "":
+        return "What did you want me to shut?";
+        
+      default:
+        return "I can't shut that.";
+    }
+  }
 }
 ```
 
@@ -215,6 +215,10 @@ npm start
 ```
 
 Open your browser to `http://localhost:1337`
+
+## Isomorphic React Goodness
+
+Isomorphic React components live in the `/views` directory.
 
 ## License and Editing the API
 
