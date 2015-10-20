@@ -13,7 +13,7 @@ module.exports = React.createClass({
   render: function () {
     return (
       <Default title={this.props.title} scripts={this.props.scripts}>
-        <h1>Welcome to the (local) Game</h1>
+        <h1>Welcome to the ({ (this.props.local) ? 'remote' : 'local' }) Game</h1>
         <div id="game">
           <Game />
         </div>
