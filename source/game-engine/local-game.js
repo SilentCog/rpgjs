@@ -250,11 +250,11 @@ var GameEngine = {};
       var result;
       
       if(frameActions[cFrameName] && frameActions[cFrameName][com])
-        result = frameActions[cFrameName][com].action.apply(g, [arg]);
+        result = frameActions[cFrameName][com].action.apply(g, [arg, com]);
       else if(gameActions[com])
-        result = gameActions[com].action.apply(g, [arg]);
+        result = gameActions[com].action.apply(g, [arg, com]);
       else if(basicActions[com])
-        result = basicActions[com].action(arg);
+        result = basicActions[com].action(arg, com);
       else
         result = "I don't understand \"" + com + "\"";
       

@@ -16,45 +16,44 @@ var theMansion = {
           switch(typeof openable)
           {
             case "string":
-              this.gameVar("IsOpen_" + f + "_" + openable, false);
+              this.gameVars("IsOpen_" + f + "_" + openable, false);
               break;
             case "object":
-              this.gameVar("IsOpen_" + f + "_" + openable.name, openable.initValue);
+              this.gameVars("IsOpen_" + f + "_" + openable.name, openable.initValue);
               break;
           }
         }
       }
     }
-  }
+  },
   gameActions    : {
-    open : function(com) {
-      if(!com)
+    open : function(arg) {
+      if(!arg)
         return "What do you want me to open?";
 
       var frameName = this.getCurrentFrameName() ;
       var frame     = this.getCurrentFrame()     ;
       var openables = frame.openables            ;
 
-      if(!openables || !openables[com])
-        return "I can't open " + com;
+      if(!openables || !openables[arg])
+        return "I can't open " + arg;
 
-      var openable = openables[com];
+      var openable = openables[arg];
 
-      if(!this.gameVar("IsOpen_" + frameName + "_" + com))
+      if(!this.gameVars("IsOpen_" + frameName + "_" + arg))
       {
-        if(openables.onChanged)
-          return openables.changed.apply(this);
-
         if(openable.onTryOpen)
-          return openables.onOpen.apply(this);
+          openables.onOpen.apply(this);
 
         if(openable.canOpen && !openable.canOpen.apply(this))
           return;
 
-        this.gameVar("IsOpen_" + frameName + "_" + com, true);
+        this.gameVars("IsOpen_" + frameName + "_" + arg, true);
 
-        if(openable.onOpened)
+        if(openable.onOpen)
           return openables.onOpen.apply(this);
+        else
+          return "I've opened the " + arg;
       }
       else
       {
@@ -65,7 +64,56 @@ var theMansion = {
           case "function":
             return openable.alreadyOpen.apply(this);
           default:
-            return com + " is already open!";
+            return arg + " is already open!";
+        }
+      }
+    },
+    close : {
+      aliases : [ "shut" ],
+      action  : function(arg, verb) {
+        var pastTense = {
+          "close" : "closed" ,
+          "shut"  : "shut"
+        }[verb]; // lol readability
+        
+        if(!arg)
+          return "What do you want me to " + verb + "?";
+
+        var frameName = this.getCurrentFrameName() ;
+        var frame     = this.getCurrentFrame()     ;
+        var openables = frame.openables            ;
+
+        if(!openables || !openables[arg])
+          return "I can't " + verb + " " + arg;
+
+        var openable = openables[arg];
+
+        if(this.gameVars("IsOpen_" + frameName + "_" + arg))
+        {
+          if(openable.onTryClose)
+            openables.onTryClose.apply(this);
+
+          if(openable.canClose && !openable.canClose.apply(this))
+            return;
+
+          this.gameVars("IsOpen_" + frameName + "_" + arg, false);
+
+          if(openable.onClose)
+            return openables.onClose.apply(this);
+          else
+            return "I've " + pastTense + " the " + arg;
+        }
+        else
+        {
+          switch(typeof openable.alreadyClosed)
+          {
+            case "string":
+              return openable.alreadyClosed;
+            case "function":
+              return openable.alreadyClosed.apply(this);
+            default:
+              return arg + " is already " + pastTense + "!";
+          }
         }
       }
     }
@@ -84,7 +132,7 @@ var theMansion = {
         "key"    : {
           pronounString : "a key",
           availability  : function() {
-            return this.frameVars("drawerOpen");
+            return this.gameVars("IsOpen_entry_drawer");
           },
           use           : function(obj) { // TODO: I don't like the way "use" works right now.  It should have to get a string to figure out which room it's in - Sandy
             if(this.getCurrentFrameName() === "doorRoom") {
@@ -114,65 +162,10 @@ var theMansion = {
             return "The door is shut";
         }
       },
-      frameActions : {
-        "shut" : {
-          aliases : [ "close" ],
-          action  : function(val) {
-            switch(val) {
-              case "door":
-                if(this.frameVars("doorOpen")) {
-                  this.frameVars("doorOpen", false);
-                  return "I've shut the door";
-                }
-                else
-                  return "The door is already shut";
-                break;
-                
-              case "drawer":
-                if(this.frameVars("drawerOpen")) {
-                  this.frameVars("drawerOpen", false);
-                  return "I've shut the drawer";
-                }
-                else
-                  return "The drawer is already shut";
-                break;  
-                
-              case "":
-                return "What did you want me to shut?";
-                
-              default:
-                return "I can't shut that.";
-            }
-          }
-        },
-        "open" : function(val) {
-          switch(val) {
-            case "door":
-              if(!this.frameVars("doorOpen")) {
-                this.frameVars("doorOpen", true);
-                return "I've opened the door";
-              }
-              else
-                return "The door is already open";
-              break;
-              
-            case "drawer":
-              if(!this.frameVars("drawerOpen")) {
-                this.frameVars("drawerOpen", true);
-                return "I've opened the door" + (this.frameHasItem("key") ? ", there is a key inside." : ".");
-              }
-              else
-                return "The drawer is already open";
-              break;
-              
-            case "":
-              return "What did you want me to open?";
-              
-            default:
-              return "I can't open that.";
-          }
-        }
-      }
+      openables : {
+        "door"   : {} ,
+        "drawer" : {}
+      },
     },
     "hallway" : {
       intro    : "You're in a long hallway.  It splits off to the east and west.  To the south is the entrance to the mansion.",
@@ -229,45 +222,16 @@ var theMansion = {
         this.initFrameVar( "doorOpen",   false );
         this.initFrameVar( "doorLocked", true  );
       },
-      frameActions : {
-        "shut" : function(val) {
-          switch(val) {
-            case "door":
-              if(this.frameVars("doorOpen")) {
-                this.frameVars("doorOpen", false);
-                return "I've shut the door";
-              }
-              else
-                return "The door is already shut";
-              break;
-              
-            case "":
-              return "What did you want me to shut?";
-              
-            default:
-              return "I can't shut that.";
-          }
-        },
-        "open" : function(val) {
-          switch(val) {
-            case "door":
-              if(!this.frameVars("doorOpen")) {
-                if(!this.frameVars("doorLocked")) {
-                  this.frameVars("doorOpen", true);
-                  return "I've opened the door";
-                }
-                else
-                  return "It's locked.";
-              }
-              else
-                return "The door is already open";
-              break;
-              
-            case "":
-              return "What did you want me to open?";
-              
-            default:
-              return "I can't open that.";
+      openables : {
+        "door" : {
+          canOpen : function()
+          {
+            var locked = this.frameVars("doorLocked");
+
+            if(locked)
+              this.print("It's locked");
+
+            return !locked;
           }
         }
       },
