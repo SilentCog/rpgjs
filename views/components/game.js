@@ -54,7 +54,7 @@ module.exports = React.createClass({
       );
     });
     return (
-      <section>
+      <section ref="game">
         <div id="GameArea">
           { lines }
         </div>
