@@ -220,6 +220,4 @@ Open your browser to `http://localhost:1337`
 
 Code is provided "as-is" and comes with no promises of **any kind**.  You may modify the API in anyway you see fit, but please provide a reference to this repository, as well as a copy of this read-me.
 
-https://github.com/PacmanBits/console-game
-branched from
-https://github.com/mimiflynn/console-game
+https://github.com/SilentCog/console-game

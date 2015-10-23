@@ -2,17 +2,14 @@ var GameView;
 var GameEngine = require('./game-engine/remote-game');
 
 var Game = {};
+var receiver;
 
-(function()
-{
-  var receiver;
-  Game.LoadGame = function(gameName)
-  {
-    receiver = GameEngine.NewGame(gameName, GameView.appendText);
-    
-    GameView.setCommandReceiver(receiver);
-  };
-})();
+Game.LoadGame = function (gameName) {
+  receiver = GameEngine.NewGame(gameName, GameView.appendText);
+  GameView.setCommandReceiver(receiver);
+};
 
-GameView = require('./js/game-view')(Game.LoadGame);
-Game.LoadGame("the-mansion");
+document.addEventListener("DOMContentLoaded", function (e) {
+  GameView = require('./js/game-view')(Game.LoadGame);
+  Game.LoadGame("the-mansion");
+});
