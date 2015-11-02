@@ -5,21 +5,19 @@ module.exports = React.createClass({
     handleSelect: React.PropTypes.func,
     selectValues: React.PropTypes.object
   },
-  handleClick: function (e) {
-    this.props.handleSelect(e.target.value);
+  handleClick: function (item) {
+    this.props.handleSelect(item);
   },
   render: function () {
+    var that = this;
     var items = Object.keys(this.props.selectValues);
     items = items.map(function (item, index) {
       return (
-        <span key={item}>
-          <input type="radio" value={item} onClick={this.handleClick} />
-          <label>{item}</label>
-        </span>
+        <input key={item} type="button" value={item} name={item} onClick={that.handleClick.bind(that, item)} />
       );
     });
     return (
-      <div id="GameSelectBox" className="hint radioBox">
+      <div id="GameSelectBox">
         { items }
       </div>
     );

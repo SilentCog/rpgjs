@@ -26,8 +26,9 @@ module.exports = React.createClass({
   initializeGame: function () {
     this.game = GameEngine.NewGame(this.props.defaultGame, this.updateText);
   },
-  reInitializeGame: function () {
-    this.game = GameEngine.NewGame(this.props.defaultGame, this.updateText);
+  reInitializeGame: function (game) {
+    gameLines = [];
+    this.game = GameEngine.NewGame(this.props.games[game], this.updateText);
   },
   handleSubmit: function (e) {
     e.preventDefault();
