@@ -2,18 +2,25 @@ var React = require('react');
 
 module.exports = React.createClass({
   propTypes: {
-    changeGame: React.PropTypes.func
+    handleSelect: React.PropTypes.func,
+    selectValues: React.PropTypes.object
   },
   handleClick: function (e) {
-    this.props.changeGame(e.target.value);
+    this.props.handleSelect(e.target.value);
   },
   render: function () {
+    var items = Object.keys(this.props.selectValues);
+    items = items.map(function (item, index) {
+      return (
+        <span key={item}>
+          <input type="radio" value={item} onClick={this.handleClick} />
+          <label>{item}</label>
+        </span>
+      );
+    });
     return (
       <div id="GameSelectBox" className="hint radioBox">
-        <input type="radio" name="GameSelect" id="GameSelect_Mansion" value="the-mansion" onClick={this.handleClick} />
-        <label htmlFor="GameSelect_Mansion">The Mansion</label>
-        <input type="radio" name="GameSelect" id="GameSelect_Simple" value="simple-game" onClick={this.handleClick} />
-        <label htmlFor="GameSelect_Simple">Simple Game</label>
+        { items }
       </div>
     );
   }

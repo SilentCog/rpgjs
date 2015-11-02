@@ -5,7 +5,7 @@ var Default = require('../layouts/default');
 module.exports = React.createClass({
   propTypes: {
     title: React.PropTypes.string,
-    error: React.PropTypes.object,
+    error: React.PropTypes.number,
     message: React.PropTypes.string
   },
   render: function () {

@@ -2,7 +2,6 @@ var React = require('react');
 
 var Default = require('../layouts/default');
 var Game = require('../components/game');
-var Selector = require('../components/selector');
 
 module.exports = React.createClass({
   propTypes: {
@@ -15,9 +14,6 @@ module.exports = React.createClass({
       <Default title={this.props.title} scripts={this.props.scripts}>
         <h1>Welcome to the ({ (this.props.local) ? 'local' : 'remote' }) Game</h1>
         <div id="game" />
-        <div id="selector">
-          <Selector />
-        </div>
         <div className="hint">click <a href={ (this.props.local) ? '/remote-game' : '/' }>here</a> to use the "{ (this.props.local) ? 'remote' : 'local' }" version</div>
       </Default>
     );

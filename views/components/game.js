@@ -3,11 +3,14 @@ var ReactDom = require('react-dom');
 
 var GameEngine = require('../../source/game-engine/local-game');
 
+var Selector = require('./selector');
+
 var gameLines = [];
 
 module.exports = React.createClass({
   propTypes: {
-    game: React.PropTypes.object
+    defaultGame: React.PropTypes.object,
+    games: React.PropTypes.object
   },
   getInitialState: function () {
     return {
@@ -21,7 +24,10 @@ module.exports = React.createClass({
     ReactDom.findDOMNode(this.refs.gameInput).focus();
   },
   initializeGame: function () {
-    this.game = GameEngine.NewGame(this.props.game, this.updateText);
+    this.game = GameEngine.NewGame(this.props.defaultGame, this.updateText);
+  },
+  reInitializeGame: function () {
+    this.game = GameEngine.NewGame(this.props.defaultGame, this.updateText);
   },
   handleSubmit: function (e) {
     e.preventDefault();
@@ -64,6 +70,9 @@ module.exports = React.createClass({
             style={style}
             tabIndex="-1" />
         </form>
+        <div id="selector">
+          <Selector handleSelect={this.reInitializeGame} selectValues={this.props.games} />
+        </div>
       </section>
     );
   }
