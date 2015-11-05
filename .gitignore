@@ -1,7 +1,5 @@
 node_modules/
+npm-debug.log
 
 public/js/local-game.js
-
 public/js/remote-game.js
-
-npm-debug.log
