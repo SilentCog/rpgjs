@@ -1,6 +1,10 @@
-var GameView;
-var GameEngine = require('./game-engine/remote-game');
+var React = require('react');
+var ReactDom = require('react-dom');
 
+var GameEngine = require('./game-engine/remote-game');
+var GameSelector = require('../views/components/selector');
+
+var GameView = require('./js/game-view');
 var Game = {};
 var receiver;
 
@@ -10,6 +14,11 @@ Game.LoadGame = function (gameName) {
 };
 
 document.addEventListener("DOMContentLoaded", function (e) {
-  GameView = require('./js/game-view')(Game.LoadGame);
+  GameView.initialize();
   Game.LoadGame("the-mansion");
+
+  ReactDom.render(
+    <GameSelector changeGame={Game.ReLoadGame} />,
+    document.getElementById('selector')
+  );
 });

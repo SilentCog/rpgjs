@@ -1,3 +1,7 @@
+/*
+ * jQuery view controller
+ */
+
 var $ = require('jquery');
 var escapeHtml = require('escape-html');
 
@@ -35,43 +39,39 @@ var GameView = {
       this.clearInput();
   },
   setDomElements: function (ga, gi, gs) {
-    // this.gameArea   = document.getElementById("GameArea");
-    // this.gameInput  = document.getElementById("GameInput");
     gameArea   = $("#GameArea");
     gameInput  = $("#GameInput");
-    gameSelect = $("#GameSelectBox input[type='radio']");
+    this.clearGameArea();
   },
-  initialize: function (LoadGame) {
+  displayPreloadLines: function () {
+    for(var i = 0; i < preLoadLines.length; i++) {
+      this.appendText(preLoadLines[i]);
+    }
+  },
+  handleKeyUp: function (e) {
+    var text = escapeHtml(e.target.value);
+    if(e.which == 13 && text) {
+      this.appendText(text);
+      this.sendCommandToReceivers(text);
+      this.clearInput();
+    }
+  },
+  reinitialize: function () {
+    this.clearGameArea();
+    this.displayPreloadLines();
 
-    this.setDomElements();
-
+    return this;
+  },
+  initialize: function () {
     loaded = true;
 
-    for(var i = 0; i < preLoadLines.length; i++)
-      this.appendText(preLoadLines[i]);
+    this.setDomElements();
+    this.displayPreloadLines();
 
-    window.onkeyup = function (e) {
-      var text = escapeHtml(gameInput.val());
-      if(e.which == 13 && text) {
-        this.appendText(text);
-        this.sendCommandToReceivers(text);
-        this.clearInput();
-      }
-    }.bind(this);
-
-    gameSelect.change(function () {
-      this.clearGameArea(true);
-      LoadGame($(this).val());
-    });
+    window.onkeyup = this.handleKeyUp.bind(this);
 
     return this;
   }
 };
 
-// TODO: not a huge fan of this method
-// of passing LoadGame, it doesn't
-// really match up with any other
-// workflow we use up to this point
-module.exports = function(LoadGame) {
-  return GameView.initialize(LoadGame);
-};
+module.exports = GameView;

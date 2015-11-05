@@ -9,16 +9,18 @@ module.exports = function (grunt) {
       ]
     },
     jshint: {
-      files: ['Gruntfile.js', 'source/**/*.js'],
+      files: ['Gruntfile.js', 'source/**/*.js', 'views/**/*.js'],
       options: {
         globals: {
           console: true
-        }
+        },
+        additionalSuffixes: ['.js']
       }
     },
     browserify: {
       dev: {
         options: {
+          transform: ['reactify'],
           browserifyOptions: {
             debug: true
           }
@@ -34,14 +36,14 @@ module.exports = function (grunt) {
         atBegin: true
       },
       dev: {
-        files: ['source/**/*.js'],
+        files: ['source/**/*.js', 'views/**/*.js'],
         tasks: ['jshint', 'browserify']
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
