@@ -227,6 +227,14 @@ Isomorphic React components live in the `/views` directory. Directory structure 
     /pages - Full pages called by express routes for server side rendering
 ```
 
+## To Do
+
+ - convert to ES6
+ - convert to webpack
+ - add create separate repositories for game engines and games
+ - create two player webRTC version
+ - create webRTC console.log chat functionality between players
+
 ## License and Editing the API
 
 Code is provided "as-is" and comes with no promises of **any kind**.  You may modify the API in anyway you see fit, but please provide a reference to this repository, as well as a copy of this read-me.
