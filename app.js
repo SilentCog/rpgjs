@@ -34,30 +34,23 @@ io.use(function(socket, next) {
 
 app.use(sessionMiddleware);
 
-server.listen(1337);
-
 io.on('connection', function (socket) {
   var ioSess = socket.request.session;
 
-  socket.on('createGame', function(data)
-  {
+  socket.on('createGame', function(data) {
     var gameName = data.gameName;
     var gameData;
 
     console.log("creating new game \"" + gameName + "\" for user");
 
-    try
-    {
+    try {
       gameData = require('./source/games/' + gameName);
-    }
-    catch(e)
-    {
+    } catch (e) {
       console.error("Could not find game \"" + gameName + "\"");
       return;
     }
 
-    ioSess.game = GameEngine.NewGame(gameData, function(text)
-    {
+    ioSess.game = GameEngine.NewGame(gameData, function(text) {
       socket.emit('textCallback', { text : text });
     });
   });

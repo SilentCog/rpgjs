@@ -10,7 +10,6 @@ var GameInterface = require('../views/components/game');
 var GameSelector = require('../views/components/selector');
 
 var Game = {};
-var receiver;
 
 var games = {
   'the-mansion' : require('./games/the-mansion'),

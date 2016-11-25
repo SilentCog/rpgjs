@@ -202,7 +202,7 @@ Removes the item `itemName` from the player's inventory.  Returns true if succes
 
 ## Development Server
 
-Install node.js and run this to install dependencies:
+Install node.js and run:
 
 ```bash
 npm install
